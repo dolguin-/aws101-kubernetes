@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hola-aws101
+spec:
+  containers:
+    - name: hola-aws101
+      image: dolguin/hola-aws101:latest
+      ports:
+        - name: web
+          containerPort: 80
+          protocol: TCP
