@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: clase2-replicaset
+  labels:
+    app: clase2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clase2
+  template:
+    metadata:
+      labels:
+        app: clase2
+    spec:
+      containers:
+        - name: hola-aws101
+          image: dolguin/hola-aws101:latest
+          ports:
+            - name: web
+              containerPort: 80
+              protocol: TCP
