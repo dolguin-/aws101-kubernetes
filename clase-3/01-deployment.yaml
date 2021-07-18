@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  clase3
+  namespace: clase3
+  labels:
+    app:  clase3
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: clase3
+  template:
+    metadata:
+      labels:
+        app:  clase3
+    spec:
+      containers:
+      - name: hola-aws101
+        image: dolguin/hola-aws101:latest
+        ports:
+        - containerPort: 80
