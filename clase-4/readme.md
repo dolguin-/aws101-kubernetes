@@ -1,20 +1,21 @@
 # Servicios en Kubernetes
 
 - [Servicios en Kubernetes](#servicios-en-kubernetes)
-	- [Definicion](#definicion)
-	- [Tipos de Servicios](#tipos-de-servicios)
-		- [ClusterIP](#clusterip)
-		- [NodePort](#nodeport)
-		- [LoadBalancer](#loadbalancer)
-		- [ExternalName](#externalname)
-	- [Práctica](#práctica)
-		- [Preparación](#preparación)
-		- [Ejemplo de ClusterIP](#ejemplo-de-clusterip)
-		- [Ejemplo NodePort](#ejemplo-nodeport)
-		- [Ejemplo Load Balancer](#ejemplo-load-balancer)
-		- [Ejemplo External Name](#ejemplo-external-name)
-	- [Remover los recursos](#remover-los-recursos)
-	- [Autor](#autor)
+  - [Definicion](#definicion)
+  - [Tipos de Servicios](#tipos-de-servicios)
+    - [ClusterIP](#clusterip)
+    - [NodePort](#nodeport)
+    - [LoadBalancer](#loadbalancer)
+    - [ExternalName](#externalname)
+  - [Práctica](#práctica)
+    - [Preparación](#preparación)
+    - [Ejemplo de ClusterIP](#ejemplo-de-clusterip)
+    - [Ejemplo NodePort](#ejemplo-nodeport)
+    - [Ejemplo Load Balancer](#ejemplo-load-balancer)
+    - [Ejemplo External Name](#ejemplo-external-name)
+  - [Remover los recursos](#remover-los-recursos)
+  - [Disclaimer](#disclaimer)
+  - [Autor](#autor)
 
 ## Definicion
 
@@ -129,7 +130,7 @@ kubectl describe svc clase4
 # Session Affinity:  None
 # Events:            <none>
 
-## Eliminamos el servicio 
+## Eliminamos el servicio
 kubectl -n clase4 delete svc clase4
 ```
 
@@ -166,7 +167,7 @@ kubectl -n clase4 describe svc clase4
 # External Traffic Policy:  Cluster
 # Events:                   <none>
 
-## Eliminamos el servicio 
+## Eliminamos el servicio
 kubectl -n clase4 delete svc clase4
 
 ```
@@ -210,7 +211,7 @@ kubectl -n clase4 describe svc clase4
 #   Normal  EnsuringLoadBalancer  3m52s  service-controller  Ensuring load balancer
 #   Normal  EnsuredLoadBalancer   3m49s  service-controller  Ensured load balancer
 
-## Eliminamos el servicio 
+## Eliminamos el servicio
 kubectl -n clase4 delete svc clase4
 
 ```
@@ -219,9 +220,7 @@ kubectl -n clase4 delete svc clase4
 
 En esta sección probaremos el servicio **External Name**, este servicio simplemente asigna un nombre DNS provisto de manera externa.
 
-
 ```shell
-
 # creamos el servicio
 kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/05-service_ExternalName.yaml
 
@@ -239,13 +238,13 @@ kubectl -n clase4 describe svc clase4
 # Selector:          <none>
 # Type:              ExternalName
 # IP Families:       <none>
-# IP:                
+# IP:
 # IPs:               <none>
 # External Name:     db.prod.aws101.org
 # Session Affinity:  None
 # Events:            <none>
 
-## Eliminamos el servicio 
+## Eliminamos el servicio
 kubectl -n clase4 delete svc clase4
 ```
 
@@ -254,7 +253,7 @@ kubectl -n clase4 delete svc clase4
 Una vez que terminen de realizar las prácticas no se olviden de remover todos los recursos para no generar gastos no esperados.
 
 ```shell
-eksctl delete cluster -f aws101-cluster.yaml 
+eksctl delete cluster -f aws101-cluster.yaml
 # 2021-08-01 00:58:22 [ℹ]  eksctl version 0.55.0
 # 2021-08-01 00:58:22 [ℹ]  using region us-east-1
 # 2021-08-01 00:58:22 [ℹ]  deleting EKS cluster "aws101"
@@ -262,9 +261,15 @@ eksctl delete cluster -f aws101-cluster.yaml
 # 2021-08-01 00:58:27 [ℹ]  cleaning up AWS load balancers created by Kubernetes objects of Kind Service or Ingress
 ```
 
+## Disclaimer
+
+Para realizar las practicas no es necesario utilizar un cloud provider, la mayoria de las practicas se pueden realizar en [Play With K8s](https://labs.play-with-k8s.com/), de todas maneras para algunas practicas relacionadas con componentes que solo estan disponibles en un cloud provider es preferible que sea en un cloud provider como AWS, GCP o Azure.
+El participante es 100% responsable de los costos generados para al realizar las practicas, desde este espacio renunciamos a toda responsabilidad por costos generados al realizar los laboratorios.
+Les pedimos que sean concientes de remover todos los recursos utilizados cuando finalizen las practicas.
+
 ## Autor
 
 Damian A. Gitto Olguin
-AWS Community Hero
-@enlink / @teracloudio
-https://teracloud.io
+[AWS Community Hero](https://www.youtube.com/c/damianolguinAWSHERO)
+[@enlink](https://twitter.com/enlink)] / [@teracloudio](https://twitter.com/teracloudio)
+<https://teracloud.io>
