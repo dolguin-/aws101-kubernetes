@@ -55,10 +55,10 @@ Para esta clase vamos a crear el namespace `clase4` luego vamos a desplegar nues
 
 ```shell
 # Aplicamos el manifest que crea nuestro namespace
-kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/00-namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-4/00-namespace.yaml
 
 # aplicamos el manifest que despliega nuestro deployment
-kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/01-deployment.yaml
+kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-4/01-deployment.yaml
 
 # Controlamos que nuestro deployment ya este listo
 kubectl -n clase4 get deployment
@@ -105,7 +105,7 @@ Primero vamos a probar **ClusterIP**, aquí podemos ver que el servicio tendrá 
 
 ```shell
 # creamos el Servicio
-kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/02-service_clusterIP.yaml
+kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-4/02-service_clusterIP.yaml
 
 # chequeamos que este aplicado
 kubectl -n clase4 get svc
@@ -140,7 +140,7 @@ En este caso vamos a probar **NodePort** el cual va a asignar el IP de los worke
 
 ```shell
 # creamos el servicio
-kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/03-service_nodeport.yaml
+kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-4/03-service_nodeport.yaml
 
 # chequeamos que este aplicado
 kubectl -n clase4 get svc
@@ -180,7 +180,7 @@ Como este ejemplo requiere la creación de un load balancer tener en cuenta que 
 ```shell
 
 # creamos el servicio
-kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/04-service_LoadBalancer.yaml
+kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-4/04-service_LoadBalancer.yaml
 
 # chequeamos que este aplicado
 kubectl -n clase4 get svc
@@ -222,7 +222,7 @@ En esta sección probaremos el servicio **External Name**, este servicio simplem
 
 ```shell
 # creamos el servicio
-kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/05-service_ExternalName.yaml
+kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-4/05-service_ExternalName.yaml
 
 # chequeamos que este aplicado
 kubectl -n clase4 get svc
