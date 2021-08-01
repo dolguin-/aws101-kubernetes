@@ -18,5 +18,12 @@ spec:
       containers:
       - name: hola-aws101
         image: dolguin/hola-aws101:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
         ports:
         - containerPort: 80
