@@ -31,5 +31,5 @@ jobs:
         run: pre-commit --version
 
       # Runs a set of commands using the runners shell
-      - name: Validate installation
+      - name: Run tests
         run: pre-commit run --all-files
