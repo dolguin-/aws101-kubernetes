@@ -1,10 +1,26 @@
 # Servicios en Kubernetes
 
-## Servicios
+- [Servicios en Kubernetes](#servicios-en-kubernetes)
+	- [Definicion](#definicion)
+	- [Tipos de Servicios](#tipos-de-servicios)
+		- [ClusterIP](#clusterip)
+		- [NodePort](#nodeport)
+		- [LoadBalancer](#loadbalancer)
+		- [ExternalName](#externalname)
+	- [Práctica](#práctica)
+		- [Preparación](#preparación)
+		- [Ejemplo de ClusterIP](#ejemplo-de-clusterip)
+		- [Ejemplo NodePort](#ejemplo-nodeport)
+		- [Ejemplo Load Balancer](#ejemplo-load-balancer)
+		- [Ejemplo External Name](#ejemplo-external-name)
+	- [Remover los recursos](#remover-los-recursos)
+	- [Autor](#autor)
+
+## Definicion
 
 Los Servicios de k8s son una forma abstracta de exponer una aplicación que se ejecuta de manera distribuida en un grupo de Pods.
 
-Es una forma **abstracta** por que no tenes que modificar tu aplicacion cuando la despleges en distintos lugares para adaptarse al ambiente, por que **k8s** te proporciona esta capacidad de service discovery por medio de esta pone disponible tu aplicacion.
+Es una forma **abstracta** por que no tenes que modificar tu aplicación cuando la desplegamos en distintos lugares para adaptarse al ambiente, por que **k8s** te proporciona esta capacidad de service discovery por medio de esta pone disponible tu aplicación.
 
 ## Tipos de Servicios
 
@@ -14,33 +30,33 @@ Existen cuatro tipos de servicios que podemos utilizar en los cluster de Kuberne
 
 Es el servicio por defecto, expone el servicio de forma **interna**, de manera que pueda ser alcanzado **solamente desde dentro del cluster**.
 
-Esto es util para servicios que son privados que no queremos que sean expuestos a internet.
+Esto es útil para servicios que son privados que no queremos que sean expuestos a internet.
 
 ### NodePort
 
-Expone el servicio utilizando el/los IP y un puerto estatico de los nodos, a su vez le asigna automaricamente un ClusterIP que utilizara para routear el trafico dentro del cluster para alcanzar a los pods.
+Expone el servicio utilizando el/los IP y un puerto estático de los nodos, a su vez le asigna automáticamente un ClusterIP que utiliza para enrutar el tráfico dentro del cluster para alcanzar a los pods.
 
 ### LoadBalancer
 
-Quiza unos de los mas utilizados en produccion, expone el servicio atraves de un load balancer provicionado por el cloud provider, utiliza el Cloud Controler Manager **C-C-M** para comunicarse con el cloud provider y solicitar los recuros y crearlos **automagicamente**.
+Quizás unos de los más utilizados en producción, expone el servicio a través de un load balancer provisionado por el cloud provider, utiliza el Cloud Controller Manager **C-C-M** para comunicarse con el cloud provider y solicitar los recursos y crearlos **automágicamente**.
 
-El load balancer se encarga de routear el trafico utilizando NodePorts y ClusterIP a donde se encuentre corriendo.
+El load balancer se encarga de enrutar el tráfico utilizando NodePorts y ClusterIP a donde se encuentre corriendo.
 
 ### ExternalName
 
-El tipo External Name relaciona un servicio con un nombre DNS definido externamente al cluster, este tipo de servicio no es de los mas utilizado.
+El tipo External Name relaciona un servicio con un nombre DNS definido externamente al cluster, este tipo de servicio no es de los más utilizados.
 
-## Practica
+## Práctica
 
-Para esta clase vamos a crear el name space `clase4` luego vamos a desplegar nuestra aplicacion `Hola-aws101` a travez de un `deployment` llamado `clase4`.
+Para esta clase vamos a crear el namespace `clase4` luego vamos a desplegar nuestra aplicación `Hola-aws101` a través de un `deployment` llamado `clase4`.
 
-### Preparacion
+### Preparación
 
 ```shell
 # Aplicamos el manifest que crea nuestro namespace
 kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/00-namespace.yaml
 
-# aplicamos el manifest que despliega nuesro deployment
+# aplicamos el manifest que despliega nuestro deployment
 kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/01-deployment.yaml
 
 # Controlamos que nuestro deployment ya este listo
@@ -80,14 +96,14 @@ kubectl -n clase4 describe deployment clase4
 # Events:          <none>
 ```
 
-Una vez aplicados estos cambios estamos listo para provar las distintas formas de exponer la aplicacion atravez de servicios.
+Una vez aplicados estos cambios estamos listos para probar las distintas formas de exponer la aplicación a través de servicios.
 
 ### Ejemplo de ClusterIP
 
-Primero vamos a probar **ClusterIP**, qui podemos ver que el servicio tendra una ip privada internal del cluster y un puerto asignado por el cual otros PODS podran alcanzar nuestro servicio.
+Primero vamos a probar **ClusterIP**, aquí podemos ver que el servicio tendrá una ip privada interna del cluster y un puerto asignado por el cual otros PODS podrán alcanzar nuestro servicio.
 
 ```shell
-# creamos el servicio
+# creamos el Servicio
 kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-4/clase-4/02-service_clusterIP.yaml
 
 # chequeamos que este aplicado
@@ -95,7 +111,7 @@ kubectl -n clase4 get svc
 # NAME     TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
 # clase4   ClusterIP   10.100.236.78   <none>        80/TCP    20s
 
-## obtenemos infomacion del servicio
+## obtenemos información del servicio
 kubectl describe svc clase4
 
 # Name:              clase4
@@ -119,7 +135,7 @@ kubectl -n clase4 delete svc clase4
 
 ### Ejemplo NodePort
 
-En este caso vamos a probar **NodePort** el cual va a asignar el IP de los worker nodes y un puerto espesifico asociado al servicio, pero tambien se asignara un ClusterIP al servicio.
+En este caso vamos a probar **NodePort** el cual va a asignar el IP de los worker nodes y un puerto específico asociado al servicio, pero también se asignará un ClusterIP al servicio.
 
 ```shell
 # creamos el servicio
@@ -131,7 +147,7 @@ kubectl -n clase4 get svc
 # clase4   NodePort   10.100.194.19   <none>        80:30133/TCP   11s
 
 
-## obtenemos infomacion del servicio
+## obtenemos información del servicio
 kubectl -n clase4 describe svc clase4
 # Name:                     clase4
 # Namespace:                clase4
@@ -157,8 +173,8 @@ kubectl -n clase4 delete svc clase4
 
 ### Ejemplo Load Balancer
 
-En este ejmplo vamos a exporner el servicio por medio de un load balancer, el cloud controler manger va a solicitar a AWS que cree el load balancer, security group, target group y va a registrar las instancias de los worker nodes relacionadas, para esto va a utilizar un NodePort para  exponer el servicio por medio de los IP y un puerto y tambien va a generar un ClusterIP para enrutar internamente el trafico.
-Como este ejemplo requiere la creacion de un load balancer tener en cuetna que va a tardar un buen tiempoe generarse.
+En este ejemplo vamos a exponer el servicio por medio de un load balancer, el cloud controller manager va a solicitar a AWS que cree el load balancer, security group, target group y va a registrar las instancias de los worker nodes relacionadas, para esto va a utilizar un NodePort para  exponer el servicio por medio de los IP y un puerto y también va a generar un ClusterIP para enrutar internamente el tráfico.
+Como este ejemplo requiere la creación de un load balancer tener en cuenta que va a tardar un buen tiempo generarse.
 
 ```shell
 
@@ -170,7 +186,7 @@ kubectl -n clase4 get svc
 # NAME     TYPE           CLUSTER-IP      EXTERNAL-IP                                                              PORT(S)        AGE
 # clase4   LoadBalancer   10.100.80.205   acb183b32d4694335bbc9c65deec214e-877451066.us-east-1.elb.amazonaws.com   80:32734/TCP   4m
 
-## obtenemos infomacion del servicio
+## obtenemos información del servicio
 kubectl -n clase4 describe svc clase4
 # Name:                     clase4
 # Namespace:                clase4
@@ -201,7 +217,8 @@ kubectl -n clase4 delete svc clase4
 
 ### Ejemplo External Name
 
-<!-- TODO: completar descipcion -->
+En esta sección probaremos el servicio **External Name**, este servicio simplemente asigna un nombre DNS provisto de manera externa.
+
 
 ```shell
 
@@ -213,7 +230,7 @@ kubectl -n clase4 get svc
 # NAME     TYPE           CLUSTER-IP   EXTERNAL-IP          PORT(S)   AGE
 # clase4   ExternalName   <none>       hola.aws101.org   <none>    6s
 
-## obtenemos infomacion del servicio
+## obtenemos información del servicio
 kubectl -n clase4 describe svc clase4
 # Name:              clase4
 # Namespace:         clase4
@@ -234,7 +251,7 @@ kubectl -n clase4 delete svc clase4
 
 ## Remover los recursos
 
-Una ves que terminen de realizar las practicas no se olviden de remover todos los recuros para no generar gastos no experados.
+Una vez que terminen de realizar las prácticas no se olviden de remover todos los recursos para no generar gastos no esperados.
 
 ```shell
 eksctl delete cluster -f aws101-cluster.yaml 
