@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  clase5
+  namespace: clase5
+  labels:
+    app:  clase5
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: clase5
+  template:
+    metadata:
+      labels:
+        app:  clase5
+    spec:
+      containers:
+      - name: hola-aws101
+        image: dolguin/hola-aws101:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 80
+        env:
+          - name: NGINX_PORT
+            valueFrom:
+              configMapKeyRef:
+                # El nombre del  ConfigMap donde almacenamos la clave y el valor
+                name: aws101-config
+                # La clave que contiene el valor.
+                key: NGINX_PORT
+          - name: DATABASE_HOST
+            valueFrom:
+              configMapKeyRef:
+                # El nombre del  ConfigMap donde almacenamos la clave y el valor
+                name: aws101-config
+                # La clave que contiene el valor.
+                key: DATABASE_HOST
+        volumeMounts:
+          - name: config
+            mountPath: /etc/nginx/conf.d
+            readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: aws101-config
+            items:
+            - key: "default.conf"
+              path: "default.conf"
