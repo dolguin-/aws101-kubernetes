@@ -71,7 +71,7 @@ Para esta clase vamos a crear el namespace `clase5` luego vamos a Crear nuestro 
 
 - Aplicamos el manifest que crea nuestro ConfigMap
 
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-5/00-namespace.yaml`
+  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-5/01-configmap.yaml`
 
 - Verificamos que fue creado
 
@@ -135,7 +135,7 @@ Para esta clase vamos a crear el namespace `clase5` luego vamos a Crear nuestro 
 
 - Aplicamos el manifest que despliega nuestro deployment
 
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-5/02-deployment_variables.yaml`
+  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-5/02-deployment.yaml`
 
 - Controlamos que nuestro deployment ya este listo
 
