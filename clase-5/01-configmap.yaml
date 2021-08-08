@@ -12,7 +12,8 @@ data:
   # Archivos como Clave(key)
   default.conf: |
     server {
-      listen       80;
+      listen  80;
+      listen  [::]:80;
       server_name  localhost;
 
       location / {
