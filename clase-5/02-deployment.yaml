@@ -45,7 +45,7 @@ spec:
         volumeMounts:
           - name: config
             mountPath: /etc/nginx/conf.d
-            # readOnly: true
+            readOnly: true
       volumes:
         - name: config
           configMap:
