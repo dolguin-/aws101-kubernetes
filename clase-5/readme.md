@@ -111,7 +111,7 @@ Para esta clase vamos a crear el namespace `clase5` luego vamos a Crear nuestro 
 
 - Visualizamos el contenido en formato Yaml:
 
-  `kubectl -n clase5 get configmaps aws101 -o yaml`
+  `kubectl -n clase5 get configmaps aws101-config -o yaml`
 
   ```shell
   apiVersion: v1
