@@ -42,14 +42,14 @@ spec:
                 name: aws101-config
                 # La clave que contiene el valor.
                 key: DATABASE_HOST
-      #   volumeMounts:
-      #     - name: config
-      #       mountPath: /config
-      #       readOnly: true
-      # volumes:
-      #   - name: config
-      #     configMap:
-      #       name: aws101-config
-      #       items:
-      #       - key: "default.conf"
-      #         path: "default.conf"
+        volumeMounts:
+          - name: config
+            mountPath: /etc/nginx/conf.d
+            # readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: aws101-config
+            items:
+            - key: "default.conf"
+              path: "default.conf"
