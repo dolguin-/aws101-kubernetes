@@ -198,6 +198,7 @@ Para verificar las configuraciones vamos a ingresar a la linea de comandos del c
   Una ves dentro del pod imprimimos las variables de entorno ejecutando los siguientes comandos
 
   `env |grep DATABASE`
+
   `env |grep NGINX_PORT`
 
   ```shell
@@ -213,6 +214,7 @@ Para verificar las configuraciones vamos a ingresar a la linea de comandos del c
   Para verificar que nuestro **Pod** posee la configuracion que agregamos en nuestro configmap vamos a dirigirnos al directorio donde montamos el volument con la configuracion y vamos a verificar el contenido utilizando los siguientes comandos
 
   `cd /etc/nginx/conf.d/`
+
   `cat default.conf`
 
   ```shell
@@ -262,7 +264,7 @@ Les pedimos que sean concientes de remover todos los recursos utilizados cuando 
 
 ## Referencias
 
-[1](https://kubernetes.io/es/docs/concepts/configuration/configmap/)
+[1] [Documentacion de kubernetes - ConfigMap](https://kubernetes.io/es/docs/concepts/configuration/configmap/)
 
 ## Autor
 
