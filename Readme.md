@@ -21,8 +21,11 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
    1. [Video](https://youtu.be/ifKWY7NxxVg).
    1. [Material de Practicas](clase-2/).
 1. Clase 4 - Servicios.
-   1. proximamente [Video](https://www.youtube.com/c/DamianOlguinAWSHERO).
+   1. [Video](https://youtu.be/52Upml2z2So).
    1. [Material de Practicas](clase-4/readme.md).
+1. Clase 5 - ConfirMaps.
+   1. [Video](https://youtu.be/9icw5dLgXzU).
+   1. [Material de Practicas](clase-5/readme.md).
 
 ## Full Disclaimer
 
