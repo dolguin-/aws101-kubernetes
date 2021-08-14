@@ -121,7 +121,7 @@ Una vez que tenemos nuestro namespace preparado pasamos a probar las distintas f
    "VolumeType": "gp3",
    "MultiAttachEnabled": false,
    "Throughput": 125
- }****
+ }
  ```
 
 - Aplicamos el manifest que despliega nuestro pod
@@ -177,8 +177,6 @@ Una vez que tenemos nuestro namespace preparado pasamos a probar las distintas f
  NAME     TYPE           CLUSTER-IP       EXTERNAL-IP                                                             PORT(S)        AGE
  clase6   LoadBalancer   10.100.157.103   <REDACTED>.us-east-1.elb.amazonaws.com   80:30109/TCP   9s
  ```
-
- Una vez aplicados estos cambios estamos listos para verificar que al un pod de nuestro deployment contiene el volumen montado.
 
 ### Verificamos la configuración
 
