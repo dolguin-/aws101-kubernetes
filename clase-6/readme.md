@@ -178,6 +178,8 @@ Una vez que tenemos nuestro namespace preparado pasamos a probar las distintas f
  clase6   LoadBalancer   10.100.157.103   <REDACTED>.us-east-1.elb.amazonaws.com   80:30109/TCP   9s
  ```
 
+ Una vez aplicados estos cambios estamos listos para verificar que al un pod de nuestro deployment contiene el volumen montado.
+
 ### Verificamos la configuración
 
 Para verificar el volumen vamos a ingresar a la línea de comandos del container utilizando `kubectl exec -it <<pod_-_name>> -- bash` de esta manera podremos acceder al contenedor que está corriendo, de una manera similar a lo que hacemos con `Docker exec`.
