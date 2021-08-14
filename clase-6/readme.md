@@ -89,7 +89,7 @@ Ejemplo:
 
 ## Práctica
 
-Para esta clase vamos a crear el namespace `clase6` luego vamos a crear un Pod `test-ebs` donde crearemos el volumen y lo expondermos a través de un `service` llamado `clase6`.
+Para esta clase por cuestion de tiempo solo vamos probar **awsElasticBlockStore**, para ello vamos a crear el namespace `clase6` luego vamos a crear un Pod `test-ebs` donde crearemos el volumen y lo expondermos a través de un `service` llamado `clase6`.
 
 ### Preparación
 
