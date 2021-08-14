@@ -26,6 +26,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 1. Clase 5 - ConfirMaps.
    1. [Video](https://youtu.be/9icw5dLgXzU).
    1. [Material de Practicas](clase-5/readme.md).
+1. Clase 6 - Volumenes.
+   1. [Video](https://www.youtube.com/watch?v=Sccd454SgWk&list=PLQ1M3apmTbgNRyHqBQ7FRml64XV-GpIRt).
+   1. [Material de Practicas](clase-6/readme.md).
 
 ## Full Disclaimer
 
