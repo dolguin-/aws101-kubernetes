@@ -1,6 +1,6 @@
-# ConfigMap
+# Volumenes
 
-- [ConfigMap](#configmap)
+- [Volumenes](#volumenes)
   - [Definicion](#definicion)
   - [Tipos](#tipos)
     - [awsElasticBlockStore](#awselasticblockstore)
