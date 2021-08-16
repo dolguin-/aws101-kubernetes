@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql
+  name: mariadb
   labels:
     app: clase7
   namespace: clase7
@@ -9,18 +9,18 @@ spec:
   selector:
     matchLabels:
       app: clase7
-      tier: mysql
+      tier: mariadb
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app: clase7
-        tier: mysql
+        tier: mariadb
     spec:
       containers:
-      - image: mysql:8.0
-        name: mysql
+      - image: mariadb:10.6
+        name: mariadb
         resources:
           requests:
             cpu: 200m
@@ -29,30 +29,27 @@ spec:
             cpu: 500m
             memory: 500Mi
         env:
-        - name: MYSQL_ROOT_PASSWORD
+        - name: MARIADB_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-secrets
+              name: mariadb-secrets
               key: root_password
-        - name: MYSQL_USER
+        - name: MARIADB_USER
+          value: user
+        - name: MARIADB_USER_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-secrets
-              key: user_name
-        - name: MYSQL_USER_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-secrets
+              name: mariadb-secrets
               key: user_password
-        - name: MYSQL_DATABASE
+        - name: MARIADB_DATABASE
           value: 'aws101'
         ports:
         - containerPort: 3306
-          name: mysql
+          name: mariadb
         volumeMounts:
-        - name: mysql-persistent-storage
+        - name: mariadb-persistent-storage
           mountPath: /var/lib/mysql
       volumes:
-      - name: mysql-persistent-storage
+      - name: mariadb-persistent-storage
         persistentVolumeClaim:
-          claimName: mysql-data-disk
+          claimName: mariadb-data-disk

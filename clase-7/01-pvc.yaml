@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-data-disk
+  name: mariadb-data-disk
   namespace: clase7
 spec:
   accessModes:
@@ -10,4 +10,3 @@ spec:
     requests:
       storage: 10Gi
   volumeMode: Filesystem
-  storageClassName: ebs
