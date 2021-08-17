@@ -162,15 +162,15 @@ Lo primero que vamos a hacer para este práctico es crear el namespace
 
 - Aplicamos el manifest que crea nuestro namespace
 
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-7/clase-7/00-namespace.yaml`
+  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-7/00-namespace.yaml`
 
 - Creamos el Secret que contendrá las claves de administrador y usuario de nuestra db
 
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-7/clase-7/01-secret.yaml`
+  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-7/01-secret.yaml`
 
 - Aplicamos el manifest para crear nuestro PersitentVolumeClaim
 
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-7/clase-7/02-pvc.yaml`
+  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-7/02-pvc.yaml`
 
 - Controlamos que nuestro Claim se encuentra listo
 
@@ -206,7 +206,7 @@ Lo primero que vamos a hacer para este práctico es crear el namespace
 
 - creamos el Deployment de nuestra DB
 
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/clase-7/clase-7/03-mariadb.yaml`
+  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-7/03-mariadb.yaml`
 
 - chequeamos que este aplicado
 
