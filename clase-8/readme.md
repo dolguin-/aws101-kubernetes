@@ -9,7 +9,8 @@
   - [cómo acceder a un secreto](#cómo-acceder-a-un-secreto)
   - [Práctica](#práctica)
     - [Preparación](#preparación)
-    - [Creacion de los secretos](#creacion-de-los-secretos)
+    - [Verificamos la configuración](#verificamos-la-configuración)
+    - [Otras maneras de crear se secretos](#otras-maneras-de-crear-se-secretos)
   - [Remover los recursos](#remover-los-recursos)
   - [Disclaimer](#disclaimer)
   - [Referencias](#referencias)
@@ -132,26 +133,82 @@ Todo lo realizaremos en el namespace `clase8` y los yamls para crear los siguien
 
 Como veran este caso es mucho mas completo que los que hemos realizado anteriormente por esta razon realizaremos el apply de una forma que aplique todos los Yamls contenidos en el directorio de trabajo `clase-8`
 
+Como pre-requisito deberan clonar el repositorio del curso e ingresar a la carpeta `clase-8/`
+
 ### Preparación
 
- Lo primero que vamos a hacer para este práctico es crear el namespace
+- Aplicamos todos los manifests de la siguiente manera
 
-- Aplicamos el manifest que crea nuestro namespace
+  `kubectl apply -f .`
 
- `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-6/00-namespace.yaml`
+  ```shell
+  cd clase-8
+  kubectl apply -f .
+  # namespace/clase8 created
+  # persistentvolumeclaim/mariadb-data-disk created
+  # persistentvolumeclaim/wp-pv-claim created
+  # secret/mariadb-secrets created
+  # deployment.apps/mariadb created
+  # service/mariadb created
+  # deployment.apps/wordpress created
+  # service/wordpress created
+  ```
 
-Una vez que tenemos nuestro namespace preparado pasamos a probar las distintas formas de crear secrets en k8s
+### Verificamos la configuración
 
-### Creacion de los secretos
+Una vez aplicados los cambios vamos a revisar que todas las cargas de trabajo se encuentren correctamente desplegadas.
 
-- creamos el primer secreto de manera literal
+- Verificamos los pvc
+- Verificamos los deployments
+- Verificamos los servicios
+
+- Verificamos los secrets dentro de los pods
+
+  Para verificar los secrets vamos a ingresar a la línea de comandos del container utilizando `kubectl exec -it <<pod_-_name>> -- bash` de esta manera podremos acceder al contenedor que está corriendo, de una manera similar a lo que hacemos con `Docker exec`.
+
+- ingresamos al pod
+
+  `kubectl -n clase8 get pods`
+  `kubectl -n clase8 exec -it <<pod_-_name>> -- bash`
+  Una vez dentro del pod imprimimos las variables de entorno ejecutando los siguientes comandos:
+
+  - `env | grep MARIADB_` para el Pod de mariadb
+  - `env |grep WORDPRESS_DB` para el Pod de wordpress
+
+  ```shell
+  kubectl -n clase8 get pods
+  #NAME                        READY   STATUS    RESTARTS   AGE
+  #mariadb-5c6df5699d-gdxh6    1/1     Running   0          6m48s
+  #wordpress-bc94769fd-bww69   1/1     Running   0          6m46s
+
+  kubectl -n clase8 exec -it  mariadb-5c6df5699d-gdxh6 -- bash
+
+  root@mariadb-5c6df5699d-gdxh6:/# env | grep MARIADB_
+  # MARIADB_USER=user
+  # MARIADB_DATABASE=aws101
+  # MARIADB_VERSION=1:10.6.4+maria~focal
+  # MARIADB_MAJOR=10.6
+  # MARIADB_USER_PASSWORD=user
+  # MARIADB_ROOT_PASSWORD=root
+
+  kubectl -n clase8 exec -it wordpress-bc94769fd-bww69 -- bash
+  root@wordpress-bc94769fd-bww69:/var/www/html# env |grep WORDPRESS_DB
+  # WORDPRESS_DB_HOST=mariadb
+  # WORDPRESS_DB_PASSWORD=root
+  # WORDPRESS_DB_USER=root
+  # WORDPRESS_DB_NAME=aws101
+  ```
+
+  Aquí podremos apreciar que nuestro secretos se encuentran entre las variables de entorno de nuestros Pod.
+  Cabe aclarar que los secretos se comportan de una manera similar a los ConfigMaps, cuando son actualizados es necesario reemplazar nuestros pods para que vuelvan a cargar las variables de entorno en tanto que para los archivos no es necesario.
+
+### Otras maneras de crear se secretos
+
+- tambien es posible crear un secreto de manera literal en la linea de comando
 
   para crear el secreto de manera literal utilizaremos el comando
 
-  `kubectl -n clase8 create secret generic db-secret --from-literal=username=devuser --from-literal=password='S\!B*d$zDsb'`
-
-  **(Opcional)** Si lo desean en lugar de hacerlo literal lo pueden hacer usando el yaml manifest de la siguiente manera:
-    `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-8/01-secret.yaml`
+  `kubectl -n clase8 create secret generic mi-secret --from-literal=username=devuser --from-literal=password='S\!B*d$zDsb'`
 
 - chequeamos que este aplicado
 
@@ -159,15 +216,15 @@ Una vez que tenemos nuestro namespace preparado pasamos a probar las distintas f
 
   ```shell
   NAME        TYPE     DATA   AGE
-  db-secret   Opaque   2      24m
+  mi-secret   Opaque   2      24m
   ```
 
 - describimos verificamos el secreto api-config
 
-  `kubectl -n clase8 describe secret api-config`
+  `kubectl -n clase8 describe secret mi-config`
 
   ```shell
-  Name:         db-secret
+  Name:         mi-secret
   Namespace:    clase8
   Labels:       <none>
   Annotations:  <none>
@@ -181,87 +238,6 @@ Una vez que tenemos nuestro namespace preparado pasamos a probar las distintas f
   ```
 
   Aquí podemos ver que nos muestra las keys que componen el secreto pero no los valores de cada uno.
-
-- Creamos el segundo secreto utilizando el yaml manifest
-
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-8/02-secret.yaml`
-
-- Chequeamos que este aplicado el segundo secreto
-
-  `kubectl -n clase8 get secrets api-config`
-
-  ```shell
-  NAME         TYPE     DATA   AGE
-  api-config   Opaque   1      26m
-  ```
-
-- Describimos verificamos el secreto api-config.
-
-  `kubectl -n clase8 describe secret api-config`
-
-  ```shell
-  Name:         api-config
-  Namespace:    clase8
-  Labels:       <none>
-  Annotations:  <none>
-
-  Type:  Opaque
-
-  Data
-  ====
-  config.yaml:  91 bytes
-  ````
-
-  Aquí podemos ver también que nos muestra la key que conforma el secreto que luego se convertirá en un archivo, pero no el contenido que contendrá el archivo.
-
-### Verificamos la configuración
-
-Una vez creados los secretos vamos a necesitar una carga de trabajo para poder consumirlos, en la clase de hoy vamos a utilizar un simple Pod.
-
-- Desplegamos un Pod.
-
-  `kubectl apply -f https://raw.githubusercontent.com/dolguin-/aws101-kubernetes/main/clase-8/03-pod.yaml`
-
-  Para verificar los secrets vamos a ingresar a la línea de comandos del container utilizando `kubectl exec -it <<pod_-_name>> -- bash` de esta manera podremos acceder al contenedor que está corriendo, de una manera similar a lo que hacemos con `Docker exec`.
-
-- ingresamos al pod
-
-  `kubectl -n clase8 exec -it clase8 -- bash`
-
-  ```shell
-  root@clase8:/#
-  ```
-
-  Una vez dentro del pod imprimimos las variables de entorno ejecutando los siguientes comandos
-
-  `env | grep DB_`
-
-  ```shell
-  # env|grep DB_
-  DB_USERNAME=devuser
-  DB_PASSWORD=S\!B*d$zDsb
-  ```
-
-  Aquí podremos apreciar que nuestro secreto se encuentra entre las variables de entorno de nuestro Pod.
-  Cabe aclarar que los secretos se comportan de una manera similar a los ConfigMaps, cuando son actualizados es necesario reemplazar nuestros pods para que vuelvan a cargar las variables de entorno en tanto que para los archivos no es necesario.
-
-- Verificamos los secrets en archivos
-
-  `cd /mnt/api_config`
-
-  `ls`
-
-  `cat config.yaml`
-
-  ```shell
-  root@clase8:/# cd /mnt/api_config/
-  root@clase8:/mnt/api_config# cat config.yaml
-
-  apiUrl: "https://my.api.com/api/v1"
-  username: apiTestUser
-  password: PassWordSuperSecreto123
-
-  ```
 
 ## Remover los recursos
 
