@@ -32,6 +32,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 1. Clase 7 - Volumenes Persistentes.
    1. [Video](https://youtu.be/R_9YAsW0cU4).
    1. [Material de Practicas](clase-7/readme.md).
+1. Clase 8 - Secretos.
+   1. [Video](https://youtu.be/l1jh0RA6Fpk).
+   1. [Material de Practicas](clase-8/readme.md).
 
 ## Full Disclaimer
 
