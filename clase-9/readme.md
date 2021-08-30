@@ -3,10 +3,10 @@
 - [Ingress & Ingress Controllers](#ingress--ingress-controllers)
   - [Definición Ingress](#definición-ingress)
   - [Definición Ingress Controller](#definición-ingress-controller)
-    - [Instalacion Ingress Controller (NginX)](#instalacion-ingress-controller-nginx)
+    - [Instalación Ingress Controller (NginX)](#instalación-ingress-controller-nginx)
     - [Otros Ingress Controllers](#otros-ingress-controllers)
   - [Ingress Yaml Manifests](#ingress-yaml-manifests)
-    - [comandos utililes](#comandos-utililes)
+    - [comandos utiles](#comandos-utiles)
   - [Práctica](#práctica)
     - [Preparación](#preparación)
     - [Instalamos el Ingress Controller](#instalamos-el-ingress-controller)
@@ -17,27 +17,27 @@
 
 ## Definición Ingress
 
-Los Ingress son objetos de kubernetes que administan el acceso externo a servicios dentro del cluster, comunmente HTTP.
+Los Ingress son objetos de kubernetes que administran el acceso externo a servicios dentro del cluster, comúnmente HTTP.
 
-Los ingress puden proveer balanceo de carga, TLS/SSL, hosts virtuales basados en nombres.
+Los ingress pueden proveer balanceo de carga, TLS/SSL, hosts virtuales basados en nombres.
 
-Normalmente se utilizan para en rutar el protocolo HTTP y HTTPS hacia el internet (exterior del cluster) los servicios que estan corriendo dentro del cluster; el trafico es controlado atravez de reglas de trafico definidas en el recurso **Ingress**.
+Normalmente se utilizan para enrutar el protocolo HTTP y HTTPS hacia el internet (exterior del cluster) los servicios que están corriendo dentro del cluster; el tráfico es controlado a través de reglas de tráfico definidas en el recurso **Ingress**.
 
-ref: [1 - Documentacion oficial Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
+ref: [Documentación oficial Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/)
 
 ## Definición Ingress Controller
 
 Con el objetivo de que recursos Ingress funcionen, el cluster debe poseer un ingress controller corriendo.
 
-A diferencia de otros tipos de controller que corren como parte del binario de Kube-controller-manager, los Ingress Controllers no se inician automaticamente con el cluster.
+A diferencia de otros tipos de controller que corren como parte del binario de Kube-controller-manager, los Ingress Controllers no se inician automáticamente con el cluster.
 
 El Proyecto Kubernetes soporta y mantiene los siguientes ingress controllers: AWS, GCE, y NGINX.
 
-### Instalacion Ingress Controller (NginX)
+### Instalación Ingress Controller (NginX)
 
-Las instrucciones para instalar el ingress controller de Nginx varian segun donde esta corriendo tu cluster de kubernetes o el en los cloud providers tipo de load balancer que va a utilizar, pueden buscar la informacion espesifica para su provider en la documentacion oficial <https://kubernetes.github.io/ingress-nginx/deploy/>
+Las instrucciones para instalar el ingress controller de Nginx varian segun donde esta corriendo tu cluster de kubernetes o el en los cloud providers tipo de load balancer que va a utilizar, pueden buscar la información específica para su provider en la documentacion oficial <https://kubernetes.github.io/ingress-nginx/deploy/>
 
-En esta clase vamos a realizar la instalacion para AWS con NLB utilizando el siguiente yaml manifest oficial de kubernetes, la instalacion para ALB o ELB classic es muy similar.
+En esta clase vamos a realizar la instalación para AWS con NLB utilizando el siguiente yaml manifest oficial de kubernetes, la instalación para ALB o ELB classic es muy similar.
 
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/aws/deploy.yaml
@@ -63,17 +63,17 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 # job.batch/ingress-nginx-admission-patch created
 ```
 
-Verificamos que el pods relacionados con el ingress controller este corriendo y los correspondientes al los Jobs de admicion finalizaran su tarea con estado completado.
+Verificamos que el pods relacionados con el ingress controller esté corriendo y los correspondientes a los Jobs de admisión finalizará su tarea con estado completado.
 
 ```shell
-k -n ingress-nginx get pods
+kubectl -n ingress-nginx get pods
 # NAME                                        READY   STATUS      RESTARTS   AGE
 # ingress-nginx-admission-create-557zv        0/1     Completed   0          50s
 # ingress-nginx-admission-patch-fspcc         0/1     Completed   0          50s
 # ingress-nginx-controller-65c4f84996-d7fbd   1/1     Running     0          57s
 ```
 
-Tambien podemos controlar que el servicio haya sido creado y que tenga su loadbalancer asignado.
+También podemos controlar que el servicio haya sido creado y que tenga su loadbalancer asignado.
 
 ```shell
 kubectl -n ingress-nginx get svc
@@ -90,21 +90,21 @@ ingress-nginx-controller-admission   ClusterIP      10.100.52.124    <none>     
 - Avi Kubernetes Operator provee balanceo de carga en las capas L4-L7 usando VMware NSX Advanced Load Balancer.
 - El Citrix ingress controller trabaja con Citrix Application Delivery Controller.
 - Contour es un controlador de ingreso basado en Envoy.
-- EnRoute un Api Gateway basado en Envoy based que corre como controlador de ingreso.
+- EnRoute un Api Gateway basado en Envoy que corre como controlador de ingreso.
 - Easegress IngressController es un API Gateway basado en Easegress que corre como un controlador de ingreso.
-- F5 BIG-IP Container Ingress Services para Kubernetes permite un controlador de ingreso para configurar serveridores virtuales F5 BIG-IP.
+- F5 BIG-IP Container Ingress Services para Kubernetes permite un controlador de ingreso para configurar servidores virtuales F5 BIG-IP.
 - Gloo es un controlador de ingreso open-source basado en Envoy, que ofrece funcionalidades de API gateway.
 - HAProxy Ingress es un controlador de ingreso basado en HAProxy.
-- El HAProxy Ingress Controller para Kubernetes es tambien un controlador de ingreso basado en HAProxy.
+- El HAProxy Ingress Controller para Kubernetes es también un controlador de ingreso basado en HAProxy.
 - Istio Ingress es un controlador de ingreso basado en Istio.
 - Kong Ingress Controller para Kubernetes  es un controlador de ingreso manejado por Kong Gateway.
 - El NGINX Ingress Controller para Kubernetes trabaja utilizando el servidor web NGINX (como proxy).
-- Skipper HTTP router y proxy reverso para composicion de servicios, incluye casos de uso como Kubernetes Ingress, diseñado como libreria para construir tu propio proxy a medida.
+- Skipper HTTP router y proxy reverso para composición de servicios, incluye casos de uso como Kubernetes Ingress, diseñado como librería para construir tu propio proxy a medida.
 - El Proveedor Traefik Kubernetes Ingress es un controlador de ingreso para el Traefik proxy.
-- El operador Tyk Operator extiende ingress con recursos a medida para proveer capacidad de administracion de API  a los ingress. El Operador de Tyk trabaja con la version open-source de Tyk Gateway & Tyk Cloud control plane.
+- El operador Tyk Operator extiende ingress con recursos a medida para proveer capacidad de administración de API  a los ingress. El Operador de Tyk trabaja con la versión open-source de Tyk Gateway & Tyk Cloud control plane.
 - Voyager  es un controlador de ingreso basado en HAProxy.
 
-ref: [2 - Documentacion oficial Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)
+ref: [Documentación oficial Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/)
 
 ## Ingress Yaml Manifests
 
@@ -112,38 +112,46 @@ ref: [2 - Documentacion oficial Ingress Controller](https://kubernetes.io/docs/c
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: wp
-  namespace: clase9
+ name: wp
+ namespace: clase9
 spec:
-  ingressClassName: nginx
-  rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: wordpress
-            port:
-              number: 80
+ ingressClassName: nginx
+ rules:
+ - http:
+     paths:
+     - path: /
+       pathType: Prefix
+       backend:
+         service:
+           name: wordpress
+           port:
+             number: 80
 ```
 
-### comandos utililes
+### comandos utiles
 
-- Crer un ingress desde la linea de comandos
-  `kubectl create ingress <NOMBRE> --rule=<RULE_DEFINITIONS>`
-  `kubectl create ingress catch-all --class=otheringress --rule=<RULE_DEFINITIONS>`
+- Crear un ingress desde la línea de comandos
+
+ `kubectl create ingress <NOMBRE> --rule=<RULE_DEFINITIONS>`
+
+ `kubectl create ingress catch-all --class=otheringress --rule=<RULE_DEFINITIONS>`
+
 - Listar Ingress
-  `kubectl get ingress`
+
+ `kubectl get ingress`
+
 - Describir un Ingress
-  `kubectl describe ingress <ingress_name>`
+
+ `kubectl describe ingress <ingress_name>`
+
 - Eliminar un Ingress
-  `kubectl delete ingress <ingress_name>`
+
+ `kubectl delete ingress <ingress_name>`
 
 ## Práctica
 
-En esta clase vamos realizar un ejercicio mas similar a la vida real, vamos a desplegar un stack completo para correr wordpress incluyendo la base de datos tal y como la desplegamos en la clase anterior.
-Todo lo realizaremos en el namespace `clase9` y los yamls para crear los siguientes componenentes:
+En esta clase vamos a realizar un ejercicio más similar a la vida real, vamos a desplegar un stack completo para correr wordpress incluyendo la base de datos tal y como la desplegamos en la clase anterior.
+Todo lo realizaremos en el namespace `clase9` y los yamls para crear los siguientes componentes:
 
 - Storage Class
 - PVC para mariaDB
@@ -155,9 +163,9 @@ Todo lo realizaremos en el namespace `clase9` y los yamls para crear los siguien
 - Deployment de Wordpress
 - Service para Wordpress
 
-Como veran este caso es mucho mas completo que los que hemos realizado anteriormente por esta razon realizaremos el apply de una forma que aplique todos los Yamls contenidos en el directorio de trabajo `clase-9`
+Como verán este caso es mucho más completo que los que hemos realizado anteriormente por esta razón realizaremos el apply de una forma que aplique todos los Yamls contenidos en el directorio de trabajo `clase-9`
 
-Como pre-requisito deberan clonar el repositorio del curso e ingresar a la carpeta `clase-9/`
+Como pre-requisito deberán clonar el repositorio del curso e ingresar a la carpeta `clase-9/`
 
 ### Preparación
 
@@ -165,23 +173,23 @@ Como pre-requisito deberan clonar el repositorio del curso e ingresar a la carpe
 
   `kubectl apply -f .`
 
-  ```shell
-  cd clase-9
-  kubectl apply -f .
-  # namespace/clase9 created
-  # persistentvolumeclaim/mariadb-data-disk created
-  # persistentvolumeclaim/wp-pv-claim created
-  # secret/mariadb-secrets created
-  # deployment.apps/mariadb created
-  # service/mariadb created
-  # deployment.apps/wordpress created
-  # service/wordpress created
-  # ingress.networking.k8s.io/wp created
-  ```
+ ```shell
+ cd clase-9
+ kubectl apply -f .
+ # namespace/clase9 created
+ # persistentvolumeclaim/mariadb-data-disk created
+ # persistentvolumeclaim/wp-pv-claim created
+ # secret/mariadb-secrets created
+ # deployment.apps/mariadb created
+ # service/mariadb created
+ # deployment.apps/wordpress created
+ # service/wordpress created
+ # ingress.networking.k8s.io/wp created
+ ```
 
 ### Instalamos el Ingress Controller
 
-Para que el objeto ingress perteneciente al namespace de `clase9` pueda realizar su trabajo depende del que exista un ingress controller desplegado y que sea de la misma clase definido en el manifest, para la case de hoy desplegaremos el ingress oficial basado en **nginx** de la forma que indicamos anteriormente
+Para que el objeto ingress perteneciente al namespace de `clase9` pueda realizar su trabajo depende del que exista un ingress controller desplegado y que sea de la misma clase definido en el manifest, para la clase de hoy desplegamos el ingress oficial basado en **nginx** de la forma que indicamos anteriormente
 
 ```shell
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/aws/deploy.yaml
@@ -191,7 +199,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 Una vez aplicados los cambios vamos a revisar que todas las cargas de trabajo se encuentren correctamente desplegadas como lo hicimos en la clase-9
 
-Una ves que confirmamos que todos los objetos de la carga de trabajo estan correctamente desplegados verificamos el Ingress.
+Una vez que confirmamos que todos los objetos de la carga de trabajo están correctamente desplegados verificamos el Ingress.
 
 - `kubectl -n clase9 get ingress`
 - `kubectl -n clase9 describe ingress wp`
