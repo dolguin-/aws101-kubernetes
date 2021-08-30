@@ -35,6 +35,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 1. Clase 8 - Secretos.
    1. [Video](https://youtu.be/l1jh0RA6Fpk).
    1. [Material de Practicas](clase-8/readme.md).
+1. Clase 9 - Ingress, Ingress Classes e Ingress Controller.
+   1. [Video](https://youtu.be/ltCgxwGAaQI).
+   1. [Material de Practicas](clase-9/readme.md).
 
 ## Full Disclaimer
 
