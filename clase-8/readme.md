@@ -24,7 +24,7 @@ Los secretos ponen la información confidencial a disposición del Pod que los n
 
 Los secretos pueden ser creados por el usuario o por el sistema.
 
-ref: [1 - Documentacion oficial](#Referencias)
+ref: [Documentación oficial](https://kubernetes.io/es/docs/concepts/configuration/secret/)
 
 ## Formas de Crear un Secret
 
@@ -47,8 +47,8 @@ Si deseas crear un secreto directamente de la línea de comando ten en cuenta qu
 
 ```shell
 kubectl create Secret generic dev-db-secret \
-  --from-literal=username=devuser \
-  --from-literal=password='S\!B*d$zDsb'
+ --from-literal=username=devuser \
+ --from-literal=password='S\!B*d$zDsb'
 ```
 
 Otra cosa a considerar cuando utilizamos este método es utilizar `'` para delimitar el valor del secreto o escapar utilizando `\`
@@ -118,8 +118,8 @@ Esto es muy útil cuando tenemos aplicaciones que poseen configuraciones basadas
 
 ## Práctica
 
-En esta clase vamos realizar un ejercicio mas similar a la vida real, vamos a desplegar un stack completo para correr wordpress incluyendo la base de datos tal y como la desplegamos en la clase anterior.
-Todo lo realizaremos en el namespace `clase8` y los yamls para crear los siguientes componenentes:
+En esta clase vamos a realizar un ejercicio más similar a la vida real, vamos a desplegar un stack completo para correr wordpress incluyendo la base de datos tal y como la desplegamos en la clase anterior.
+Todo lo realizaremos en el namespace `clase8` y los yamls para crear los siguientes componentes:
 
 - Storage Class
 - PVC para mariaDB
@@ -131,9 +131,9 @@ Todo lo realizaremos en el namespace `clase8` y los yamls para crear los siguien
 - Deployment de Wordpress
 - Service para Wordpress
 
-Como veran este caso es mucho mas completo que los que hemos realizado anteriormente por esta razon realizaremos el apply de una forma que aplique todos los Yamls contenidos en el directorio de trabajo `clase-8`
+Como verán este caso es mucho más completo que los que hemos realizado anteriormente por esta razón realizaremos el apply de una forma que aplique todos los Yamls contenidos en el directorio de trabajo `clase-8`
 
-Como pre-requisito deberan clonar el repositorio del curso e ingresar a la carpeta `clase-8/`
+Como pre-requisito deberán clonar el repositorio del curso e ingresar a la carpeta `clase-8/`
 
 ### Preparación
 
@@ -161,12 +161,11 @@ Una vez aplicados los cambios vamos a revisar que todas las cargas de trabajo se
 - Verificamos los pvc
 - Verificamos los deployments
 - Verificamos los servicios
+- Verificamos los secretos dentro de los pods
 
-- Verificamos los secrets dentro de los pods
+  Para verificar los secretos vamos a ingresar a la línea de comandos del container utilizando `kubectl exec -it <<pod_-_name>> -- bash` de esta manera podremos acceder al contenedor que está corriendo, de una manera similar a lo que hacemos con `Docker exec`.
 
-  Para verificar los secrets vamos a ingresar a la línea de comandos del container utilizando `kubectl exec -it <<pod_-_name>> -- bash` de esta manera podremos acceder al contenedor que está corriendo, de una manera similar a lo que hacemos con `Docker exec`.
-
-- ingresamos al pod
+- ingresar al pod
 
   `kubectl -n clase8 get pods`
   `kubectl -n clase8 exec -it <<pod_-_name>> -- bash`
@@ -204,7 +203,7 @@ Una vez aplicados los cambios vamos a revisar que todas las cargas de trabajo se
 
 ### Otras maneras de crear se secretos
 
-- tambien es posible crear un secreto de manera literal en la linea de comando
+- también es posible crear un secreto de manera literal en la línea de comando
 
   para crear el secreto de manera literal utilizaremos el comando
 
