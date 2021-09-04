@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: clase10
+  namespace: clase10
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: clase10
+    tier: frontend
+  clusterIP: None
