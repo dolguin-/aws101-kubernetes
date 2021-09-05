@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  wordpress
+  labels:
+    app:  clase11
+  namespace: clase11
+spec:
+  selector:
+    matchLabels:
+      app: clase11
+      tier: frontend
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app:  clase11
+        tier: frontend
+    spec:
+      containers:
+      - name:  wordpress
+        image:  wordpress:5.8-apache
+        resources:
+          requests:
+            cpu: 250m
+            memory: 300Mi
+          limits:
+            cpu: 500m
+            memory: 600Mi
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: mariadb
+        - name: WORDPRESS_DB_NAME
+          value: aws101
+        - name: WORDPRESS_DB_USER
+          value: root
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-secrets
+              key: root_password
+        ports:
+        - containerPort:  80
+          name:  wordpress
+        volumeMounts:
+        - name: wp-persistent-storage
+          mountPath: /var/www/html
+      volumes:
+      - name: wp-persistent-storage
+        persistentVolumeClaim:
+          claimName: wp-pv-claim
