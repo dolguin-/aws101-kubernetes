@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+  labels:
+    app: clase10
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: clase10
+    tier: mariadb
+  clusterIP: None

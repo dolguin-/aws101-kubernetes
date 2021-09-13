@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+  labels:
+    app: clase10
+  namespace: clase10
+  # annotations:
+  #   external-dns.alpha.kubernetes.io/hostname: wp.aws101.org
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: clase10
+    tier: frontend
+  clusterIP: None
