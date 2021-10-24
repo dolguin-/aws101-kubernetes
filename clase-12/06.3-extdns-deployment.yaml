@@ -19,7 +19,7 @@ spec:
       annotations:
         # actualizar este campo con el valor obtenido luego
         # de crear el role con eksctl
-        iam.amazonaws.com/role: arn:aws:iam::XXXXXXXXX:role/eksctl-aws101-add....
+        iam.amazonaws.com/role: arn:aws:iam::695X454143523:role/eksctl-aws101-addon-iamserviceaccount-clase1-Role1-14IKSH70D3OBL
     spec:
       containers:
       - name:  external-dns
