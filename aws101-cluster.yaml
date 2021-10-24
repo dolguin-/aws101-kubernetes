@@ -11,7 +11,7 @@ kind: ClusterConfig
 managedNodeGroups:
 - amiFamily: AmazonLinux2
   desiredCapacity: 1
-  disableIMDSv1: false
+  disableIMDSv1: true
   disablePodIMDS: false
   iam:
     withAddonPolicies:
@@ -19,10 +19,10 @@ managedNodeGroups:
       appMesh: true
       appMeshPreview: false
       autoScaler: true
-      certManager: false
-      cloudWatch: false
-      ebs: false
-      efs: false
+      certManager: true
+      cloudWatch: true
+      ebs: true
+      efs: true
       externalDNS: true
       fsx: false
       imageBuilder: true
@@ -48,7 +48,7 @@ managedNodeGroups:
     alpha.eksctl.io/nodegroup-name: aws101-nodes
     alpha.eksctl.io/nodegroup-type: managed
   volumeIOPS: 3000
-  volumeSize: 80
+  volumeSize: 50
   volumeThroughput: 125
   volumeType: gp3
 metadata:
@@ -58,7 +58,7 @@ metadata:
     environment: aws101
     owner: damian
     project: aws101
-  version: "1.20"
+  version: "1.21"
 privateCluster:
   enabled: false
 vpc:
