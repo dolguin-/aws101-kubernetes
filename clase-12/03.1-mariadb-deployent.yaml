@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   name: mariadb
   labels:
-    app: clase11
-  namespace: clase11
+    app: clase12
+  namespace: clase12
 spec:
   selector:
     matchLabels:
-      app: clase11
+      app: clase12
       tier: mariadb
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: clase11
+        app: clase12
         tier: mariadb
     spec:
       containers:

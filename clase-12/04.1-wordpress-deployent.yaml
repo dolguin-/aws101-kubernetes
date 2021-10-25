@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name:  wordpress
   labels:
-    app:  clase11
-  namespace: clase11
+    app:  clase12
+  namespace: clase12
 spec:
   selector:
     matchLabels:
-      app: clase11
+      app: clase12
       tier: frontend
   replicas: 1
   strategy:
@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       labels:
-        app:  clase11
+        app:  clase12
         tier: frontend
     spec:
       containers:

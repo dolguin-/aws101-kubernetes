@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: wordpress
   labels:
-    app: clase11
-  namespace: clase11
+    app: clase12
+  namespace: clase12
 spec:
   ports:
     - port: 80
   selector:
-    app: clase11
+    app: clase12
     tier: frontend
   clusterIP: None
