@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wp
+  namespace: clase11
+spec:
+  tls:
+  - hosts:
+      - wp.aws101.org
+    secretName: wp.aws101.org
+  ingressClassName: nginx
+  rules:
+  - host: wp.aws101.org
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wordpress
+            port:
+              number: 80
