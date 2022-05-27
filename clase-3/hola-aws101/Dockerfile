@@ -1,4 +1,4 @@
-FROM nginx:1
+FROM nginx:stable
 
 COPY index.html /usr/share/nginx/html/
 
