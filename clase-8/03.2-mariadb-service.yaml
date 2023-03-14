@@ -4,6 +4,7 @@ metadata:
   name: mariadb
   labels:
     app: clase8
+  namespace: clase8
 spec:
   ports:
     - port: 3306
