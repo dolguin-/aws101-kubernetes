@@ -9,12 +9,14 @@
 ## Uso
 
 ### Iniciar cluster
+
 ```bash
 chmod +x minikube-setup.sh
 ./minikube-setup.sh
 ```
 
 ### Detener cluster
+
 ```bash
 chmod +x minikube-stop.sh
 ./minikube-stop.sh
@@ -32,53 +34,65 @@ chmod +x minikube-stop.sh
 ## Opciones de Driver
 
 ### Docker (Recomendado)
+
 ```bash
 minikube start --driver=docker
 ```
+
 - ✅ Multiplataforma (Linux, macOS, Windows)
 - ✅ Fácil instalación
 - ✅ Buen rendimiento
 - ❌ Requiere Docker Desktop
 
 ### VirtualBox
+
 ```bash
 minikube start --driver=virtualbox
 ```
+
 - ✅ Multiplataforma
 - ✅ Aislamiento completo
 - ❌ Rendimiento más lento
 - ❌ Requiere VirtualBox instalado
 
 ### VMware (macOS/Linux)
+
 ```bash
 minikube start --driver=vmware
 ```
+
 - ✅ Buen rendimiento
 - ✅ Aislamiento completo
 - ❌ Requiere VMware Fusion/Workstation (licencia)
 
 ### HyperV (Windows)
+
 ```bash
 minikube start --driver=hyperv
 ```
+
 - ✅ Nativo en Windows Pro/Enterprise
 - ✅ Buen rendimiento
 - ❌ Solo Windows
 - ❌ Requiere privilegios de administrador
 
 ### KVM2 (Linux)
+
 ```bash
 minikube start --driver=kvm2
 ```
+
 - ✅ Nativo en Linux
 - ✅ Excelente rendimiento
 - ❌ Solo Linux
 - ❌ Requiere configuración adicional
 
 ### Podman (Linux/macOS)
+
 ```bash
 minikube start --driver=podman
 ```
+
 - ✅ Sin daemon
 - ✅ Rootless
 - ❌ Experimental
