@@ -139,7 +139,7 @@ function create {
     local file_system_id
     local subnet_ids
     local mount_target_id
-    
+
     vpc_id=$(get_vpc_id "${CLUSTER_NAME}")
     echo "VPC ID: ${vpc_id}"
     cidr_range=$(get_cidr_range "${vpc_id}")
