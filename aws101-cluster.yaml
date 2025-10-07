@@ -28,7 +28,7 @@ managedNodeGroups:
       imageBuilder: true
       xRay: false
   instanceSelector: {}
-  instanceType: t3.small
+  instanceType: t3.medium
   labels:
     alpha.eksctl.io/cluster-name: aws101
     alpha.eksctl.io/nodegroup-name: aws101-nodes
@@ -58,7 +58,7 @@ metadata:
     environment: aws101
     owner: damian
     project: aws101
-  version: "1.21"
+  version: "1.31"
 privateCluster:
   enabled: false
 vpc:

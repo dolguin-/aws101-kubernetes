@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.6.0
   hooks:
     - id: check-yaml
     - id: end-of-file-fixer
@@ -9,8 +9,7 @@ repos:
     - id: trailing-whitespace
     - id: check-added-large-files
     - id: check-executables-have-shebangs
-- repo: https://github.com/jumanjihouse/pre-commit-hooks
-  rev: master  # or specific git tag
+- repo: https://github.com/koalaman/shellcheck-precommit
+  rev: v0.10.0
   hooks:
-    - id: markdownlint # Configure in .mdlrc
     - id: shellcheck
