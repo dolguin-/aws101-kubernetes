@@ -1,7 +1,9 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+name: aws101
 nodes:
 - role: control-plane
+  image: kindest/node:v1.31.0
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -16,4 +18,6 @@ nodes:
     hostPort: 8443
     protocol: TCP
 - role: worker
+  image: kindest/node:v1.31.0
 - role: worker
+  image: kindest/node:v1.31.0
