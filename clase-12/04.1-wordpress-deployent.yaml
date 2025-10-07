@@ -4,11 +4,11 @@ metadata:
   name:  wordpress
   labels:
     app:  clase11
-  namespace: clase11
+  namespace: clase12
 spec:
   selector:
     matchLabels:
-      app: clase11
+      app: clase12
       tier: frontend
   replicas: 1
   strategy:
@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name:  wordpress
-        image:  wordpress:5.8-apache
+        image:  wordpress:6.7-apache
         resources:
           requests:
             cpu: 250m

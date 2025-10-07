@@ -4,7 +4,7 @@ metadata:
   name: wordpress
   labels:
     app: clase11
-  namespace: clase11
+  namespace: clase12
 spec:
   ports:
     - port: 80

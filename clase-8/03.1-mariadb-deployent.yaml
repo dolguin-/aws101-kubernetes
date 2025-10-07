@@ -19,7 +19,7 @@ spec:
         tier: mariadb
     spec:
       containers:
-      - image: mariadb:10.6
+      - image: mariadb:11.6
         name: mariadb
         resources:
           requests:
