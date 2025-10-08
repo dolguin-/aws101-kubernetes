@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: efs-test-pod
+  namespace: default
+spec:
+  containers:
+  - name: test-container
+    image: busybox:1.37
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do echo $(date) >> /mnt/efs/test.log; sleep 30; done"]
+    volumeMounts:
+    - name: efs-volume
+      mountPath: /mnt/efs
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  volumes:
+  - name: efs-volume
+    persistentVolumeClaim:
+      claimName: efs-claim
+  restartPolicy: Always

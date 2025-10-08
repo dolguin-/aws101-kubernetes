@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: efs-statefulset
+  namespace: default
+spec:
+  serviceName: efs-headless
+  replicas: 2
+  selector:
+    matchLabels:
+      app: efs-stateful
+  template:
+    metadata:
+      labels:
+        app: efs-stateful
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: efs-storage
+          mountPath: /data
+        - name: shared-config
+          mountPath: /etc/shared
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+      volumes:
+      - name: shared-config
+        persistentVolumeClaim:
+          claimName: efs-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: efs-storage
+    spec:
+      accessModes: ["ReadWriteMany"]
+      storageClassName: efs-sc
+      resources:
+        requests:
+          storage: 1Gi
