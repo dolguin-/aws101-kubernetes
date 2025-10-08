@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: efs-test-writer
+  namespace: default
+spec:
+  containers:
+  - name: writer
+    image: busybox:1.37
+    command: ["/bin/sh"]
+    args:
+    - -c
+    - |
+      echo "Starting EFS test..."
+      mkdir -p /mnt/efs/test
+      while true; do
+        echo "$(date): Writing from pod $HOSTNAME" >> /mnt/efs/test/shared-log.txt
+        echo "EFS test file created by $HOSTNAME at $(date)" > /mnt/efs/test/test-$HOSTNAME.txt
+        ls -la /mnt/efs/test/
+        sleep 30
+      done
+    volumeMounts:
+    - name: efs-volume
+      mountPath: /mnt/efs
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  volumes:
+  - name: efs-volume
+    persistentVolumeClaim:
+      claimName: efs-claim
+  restartPolicy: Always
