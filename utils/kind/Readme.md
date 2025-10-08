@@ -1,70 +1,152 @@
-# Kind playground
+# Kind - Kubernetes IN Docker
 
-## Introduccion
+## Introducción
 
-Kind es una implementacion liviana de kubernetes que corre sobre Docker, su nombre proviene del ingles *Kubernetes IN Docker*
+Kind es una implementación liviana de Kubernetes que corre sobre Docker. Su nombre proviene del inglés **Kubernetes IN Docker**.
 
-Kind es una forma facil y rapida de crear un cluster de kubernetes para propositos como:
+Kind es una forma fácil y rápida de crear un cluster de Kubernetes para propósitos como:
 
-* Aprendizaje
-* Integracion Continua
+- 🎓 Aprendizaje y desarrollo
+- 🔄 Integración Continua (CI)
+- 🧪 Testing de aplicaciones
+- 🚀 Desarrollo local
 
-## Como crear un Cluster
+## Requisitos
 
-### Inicio rapido
+- Docker Desktop instalado y ejecutándose
+- kubectl instalado
+- kind instalado ([Guía de instalación](https://kind.sigs.k8s.io/docs/user/quick-start/#installation))
 
-```shell
-$ kind create cluster --name aws101
-Creating cluster "aws101" ...
- ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
- ✓ Preparing nodes 📦
- ✓ Writing configuration 📜
- ✓ Starting control-plane 🕹️
- ✓ Installing CNI 🔌
- ✓ Installing StorageClass 💾
-Set kubectl context to "kind-aws101"
-You can now use your cluster with:
+## Uso Rápido
 
+### Con Makefile (Recomendado)
+
+```bash
+# Ver comandos disponibles
+make help
+
+# Crear cluster completo con MetalLB
+make all
+
+# Solo crear cluster
+make install
+
+# Solo instalar MetalLB
+make lb
+
+# Ver estado del cluster
+make status
+
+# Eliminar cluster
+make delete
+```
+
+### Comandos Manuales
+
+#### Crear cluster básico
+
+```bash
+kind create cluster --name aws101
+```
+
+#### Crear cluster con configuración personalizada
+
+```bash
+kind create cluster --name aws101 --config kind-cluster.yml
+```
+
+#### Eliminar cluster
+
+```bash
+kind delete cluster --name aws101
+```
+
+## Configuración del Cluster
+
+El archivo `kind-cluster.yml` incluye:
+
+- **Kubernetes v1.31.0** (última versión estable)
+- **1 Control Plane + 2 Workers** para simular un entorno real
+- **Port Mappings** para acceso a servicios:
+  - HTTP: localhost:8080 → cluster:80
+  - HTTPS: localhost:8443 → cluster:443
+- **Ingress Ready** labels para controladores de ingress
+
+## MetalLB Load Balancer
+
+MetalLB proporciona servicios LoadBalancer en clusters locales:
+
+- **Versión**: v0.14.8 (última estable)
+- **Configuración automática** de rangos IP
+- **Detección inteligente** de red Docker
+- **L2 Advertisement** para balanceeo de carga
+
+### Rangos IP por defecto
+
+- Red `172.18.0.0/16`: IPs `172.18.255.200-172.18.255.250`
+- Red `172.19.0.0/16`: IPs `172.19.255.200-172.19.255.250`
+
+## Comandos Útiles
+
+```bash
+# Ver clusters disponibles
+kind get clusters
+
+# Cambiar contexto de kubectl
+kubectl config use-context kind-aws101
+
+# Ver información del cluster
 kubectl cluster-info --context kind-aws101
 
-Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/
+# Ver nodos
+kubectl get nodes
 
-
-$ kubectl get nodes
-NAME                   STATUS   ROLES                  AGE   VERSION
-aws101-control-plane   Ready    control-plane,master   59s   v1.21.1
+# Probar LoadBalancer
+kubectl create deployment nginx --image=nginx
+kubectl expose deployment nginx --port=80 --type=LoadBalancer
 ```
 
-### Como eliminar un cluster
+## Troubleshooting
 
-```shell
-$ kind delete cluster --name aws101
-Deleting cluster "aws101" ...
-```
+### Problemas comunes
 
-### Crear un cluster usando archivo de configuraciones
+1. **Docker no está ejecutándose**
+   ```bash
+   # Verificar Docker
+   docker ps
+   ```
 
-```shell
-$ kind create cluster --config kind-cluster.yml
-Creating cluster "kind" ...
- ✓ Ensuring node image (kindest/node:v1.21.1) 🖼
- ✓ Preparing nodes 📦 📦 📦
- ✓ Writing configuration 📜
- ✓ Starting control-plane 🕹️
- ✓ Installing CNI 🔌
- ✓ Installing StorageClass 💾
- ✓ Joining worker nodes 🚜
-Set kubectl context to "kind-kind"
-You can now use your cluster with:
+2. **Puerto ya en uso**
+   ```bash
+   # Cambiar puertos en kind-cluster.yml
+   hostPort: 8081  # En lugar de 8080
+   ```
 
-kubectl cluster-info --context kind-kind
+3. **Cluster no responde**
+   ```bash
+   # Recrear cluster
+   make delete && make install
+   ```
 
-Thanks for using kind! 😊
-```
+## Comparación con Minikube
+
+| Característica | Kind | Minikube |
+|----------------|------|----------|
+| **Base** | Docker containers | VM o containers |
+| **Velocidad** | ⚡ Muy rápido | 🐌 Más lento |
+| **Recursos** | 💚 Ligero | 🔶 Más pesado |
+| **Multi-node** | ✅ Nativo | ⚠️ Experimental |
+| **Addons** | ❌ Manual | ✅ Integrados |
+
+## Enlaces Útiles
+
+- **Documentación oficial**: https://kind.sigs.k8s.io/
+- **MetalLB**: https://metallb.universe.tf/
+- **Kubernetes**: https://kubernetes.io/docs/
 
 ## Autor
 
 Damian A. Gitto Olguin
 [AWS Community Hero](https://www.youtube.com/c/damianolguinAWSHERO)
-[@enlink](https://twitter.com/enlink)] / [@teracloudio](https://twitter.com/teracloudio)
+[@enlink](https://twitter.com/enlink) / [@teracloudio](https://twitter.com/teracloudio)
 <https://teracloud.io>
