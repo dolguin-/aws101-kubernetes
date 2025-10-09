@@ -10,29 +10,41 @@
 
 ## Uso
 
-### Iniciar cluster
+### Script unificado
 
 ```bash
-chmod +x minikube-setup.sh
-./minikube-setup.sh
+chmod +x minikube
+./minikube [COMMAND]
 ```
 
-El script realizará automáticamente:
+### Comandos disponibles
+
+#### Iniciar cluster
+```bash
+./minikube start
+```
+
+#### Detener cluster
+```bash
+./minikube stop
+```
+
+#### Mostrar ayuda
+```bash
+./minikube help
+```
+
+### Funcionalidades automáticas
+
+El comando `start` realizará automáticamente:
 1. ✅ Verificación de instalación de minikube
 2. 📥 Descarga e instalación de minikube si no está presente
 3. 🚀 Inicio del cluster con configuración optimizada
 4. 🔧 Habilitación de addons necesarios
 
-### Detener cluster
-
-```bash
-chmod +x minikube-stop.sh
-./minikube-stop.sh
-```
-
 ## Configuración del cluster
 
-- **Kubernetes**: v1.31.0
+- **Kubernetes**: v1.34.0
 - **Driver**: Docker (por defecto)
 - **CPU**: 2 cores
 - **Memoria**: 4GB

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/dolguin-/aws101-kubernetes/actions/workflows/main.yml/badge.svg)](https://github.com/dolguin-/aws101-kubernetes/actions/workflows/main.yml)
 [![Release](https://img.shields.io/github/v/release/dolguin-/aws101-kubernetes)](https://github.com/dolguin-/aws101-kubernetes/releases)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.31-blue)](https://kubernetes.io/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.34-blue)](https://kubernetes.io/)
 
 ## Prefacio
 
@@ -12,7 +12,7 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 
 ## 🚀 Características
 
-- **Kubernetes 1.31** compatible
+- **Kubernetes 1.34** compatible
 - **Manifiestos actualizados** con las últimas APIs estables
 - **Desarrollo local** con Minikube y Kind
 - **Producción en AWS** con EKS
@@ -66,9 +66,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 Cluster Kubernetes local con Docker
 ```bash
 cd utils/minikube
-./minikube-setup.sh
+./minikube start
 ```
-- Kubernetes 1.31
+- Kubernetes 1.34
 - Múltiples drivers (Docker, VirtualBox, VMware, etc.)
 - Addons preconfigurados
 - [Documentación completa](utils/minikube/)
@@ -90,7 +90,7 @@ make all
 ```bash
 eksctl create cluster -f aws101-cluster.yaml
 ```
-- Kubernetes 1.31
+- Kubernetes 1.34
 - Instancias t3.medium
 - OIDC y add-ons preconfigurados
 
@@ -137,7 +137,7 @@ cd aws101-kubernetes
 
 # 2. Iniciar cluster local
 cd utils/minikube
-./minikube-setup.sh
+./minikube start
 
 # 3. Aplicar ejemplos
 kubectl apply -f clase-1/
@@ -171,7 +171,7 @@ kubectl apply -f utils/external-dns/
 
 ## 🔧 Compatibilidad
 
-- **Kubernetes**: 1.31 (todas las APIs estables)
+- **Kubernetes**: 1.34 (todas las APIs estables)
 - **AWS EKS**: Versiones soportadas
 - **Docker**: 20.10+
 - **Sistemas**: Linux, macOS, Windows

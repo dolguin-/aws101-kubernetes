@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# Minikube management script for aws101-kubernetes course
+# Compatible with Kubernetes 1.34
+
+set -euo pipefail
+
+show_help() {
+    echo "🚀 Minikube Management Script for aws101-kubernetes"
+    echo ""
+    echo "Usage: ./minikube [COMMAND]"
+    echo ""
+    echo "Commands:"
+    echo "  start    Start minikube cluster with course configuration"
+    echo "  stop     Stop minikube cluster"
+    echo "  help     Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  ./minikube start    # Start cluster"
+    echo "  ./minikube stop     # Stop cluster"
+    echo "  ./minikube help     # Show help"
+}
+
+start_minikube() {
+    echo "🚀 Starting Minikube cluster for aws101-kubernetes..."
+
+    # Check if minikube is installed
+    if ! command -v minikube &> /dev/null; then
+        echo "⚠️  Minikube not found. Installing minikube..."
+
+        # Detect OS and architecture
+        OS=$(uname -s | tr '[:upper:]' '[:lower:]')
+        ARCH=$(uname -m)
+
+        case $ARCH in
+            x86_64) ARCH="amd64" ;;
+            arm64|aarch64) ARCH="arm64" ;;
+            *) echo "❌ Unsupported architecture: $ARCH"; exit 1 ;;
+        esac
+
+        # Download and install minikube
+        MINIKUBE_URL="https://storage.googleapis.com/minikube/releases/latest/minikube-${OS}-${ARCH}"
+
+        echo "📥 Downloading minikube for ${OS}-${ARCH}..."
+        if curl -Lo minikube "$MINIKUBE_URL"; then
+            chmod +x minikube
+            sudo mv minikube /usr/local/bin/
+            echo "✅ Minikube installed successfully!"
+        else
+            echo "❌ Failed to download minikube"
+            exit 1
+        fi
+    else
+        echo "✅ Minikube is already installed ($(minikube version --short))"
+    fi
+
+    # Start minikube with specific configuration
+    if minikube start \
+      --kubernetes-version=v1.34.0 \
+      --driver=docker \
+      --cpus=2 \
+      --memory=4096 \
+      --disk-size=20g \
+      --addons=ingress,dashboard,metrics-server; then
+      echo "✅ Minikube cluster started successfully!"
+    else
+      echo "❌ Failed to start Minikube cluster"
+      exit 1
+    fi
+
+    # Enable required addons
+    echo "🔧 Enabling additional addons..."
+    minikube addons enable ingress-dns
+    minikube addons enable storage-provisioner
+
+    # Display cluster info
+    echo "📊 Cluster Information:"
+    kubectl cluster-info
+    kubectl get nodes
+
+    echo "🎯 Ready to run aws101-kubernetes exercises!"
+    echo "💡 Use 'kubectl get namespaces' to see available namespaces"
+    echo "🌐 Access dashboard with: minikube dashboard"
+}
+
+stop_minikube() {
+    echo "🛑 Stopping Minikube cluster..."
+
+    if minikube stop; then
+      echo "✅ Minikube cluster stopped successfully!"
+    else
+      echo "❌ Failed to stop Minikube cluster"
+      exit 1
+    fi
+
+    echo "💡 Use './minikube start' to start again"
+}
+
+# Main script logic
+case "${1:-help}" in
+    start)
+        start_minikube
+        ;;
+    stop)
+        stop_minikube
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        echo "❌ Unknown command: $1"
+        echo ""
+        show_help
+        exit 1
+        ;;
+esac
