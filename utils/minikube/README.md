@@ -3,28 +3,48 @@
 ## Requisitos
 
 - Docker Desktop instalado y ejecutándose
-- Minikube instalado
 - kubectl instalado
+- curl (para descarga automática de minikube si no está instalado)
+
+**Nota:** El script instalará automáticamente minikube si no está presente en el sistema.
 
 ## Uso
 
-### Iniciar cluster
+### Script unificado
 
 ```bash
-chmod +x minikube-setup.sh
-./minikube-setup.sh
+chmod +x minikube
+./minikube [COMMAND]
 ```
 
-### Detener cluster
+### Comandos disponibles
 
+#### Iniciar cluster
 ```bash
-chmod +x minikube-stop.sh
-./minikube-stop.sh
+./minikube start
 ```
+
+#### Detener cluster
+```bash
+./minikube stop
+```
+
+#### Mostrar ayuda
+```bash
+./minikube help
+```
+
+### Funcionalidades automáticas
+
+El comando `start` realizará automáticamente:
+1. ✅ Verificación de instalación de minikube
+2. 📥 Descarga e instalación de minikube si no está presente
+3. 🚀 Inicio del cluster con configuración optimizada
+4. 🔧 Habilitación de addons necesarios
 
 ## Configuración del cluster
 
-- **Kubernetes**: v1.31.0
+- **Kubernetes**: v1.34.0
 - **Driver**: Docker (por defecto)
 - **CPU**: 2 cores
 - **Memoria**: 4GB
