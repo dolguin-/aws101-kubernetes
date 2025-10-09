@@ -61,6 +61,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 13. **Clase 13** - GitOps y ArgoCD
     - [Material](clase-13/)
 
+14. **Clase 14** - Helm Charts
+    - [Material](clase-14/)
+
 ## 🛠️ Herramientas y Utilidades
 
 ### Desarrollo Local
