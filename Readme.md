@@ -58,6 +58,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 12. **Clase 12** - Cert-Manager
     - [Material](clase-12/)
 
+13. **Clase 13** - GitOps y ArgoCD
+    - [Material](clase-13/)
+
 ## 🛠️ Herramientas y Utilidades
 
 ### Desarrollo Local
