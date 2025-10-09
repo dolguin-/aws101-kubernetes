@@ -3,8 +3,10 @@
 ## Requisitos
 
 - Docker Desktop instalado y ejecutándose
-- Minikube instalado
 - kubectl instalado
+- curl (para descarga automática de minikube si no está instalado)
+
+**Nota:** El script instalará automáticamente minikube si no está presente en el sistema.
 
 ## Uso
 
@@ -14,6 +16,12 @@
 chmod +x minikube-setup.sh
 ./minikube-setup.sh
 ```
+
+El script realizará automáticamente:
+1. ✅ Verificación de instalación de minikube
+2. 📥 Descarga e instalación de minikube si no está presente
+3. 🚀 Inicio del cluster con configuración optimizada
+4. 🔧 Habilitación de addons necesarios
 
 ### Detener cluster
 
