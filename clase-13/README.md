@@ -9,6 +9,7 @@
   - [Práctica](#práctica)
     - [Preparación](#preparación)
     - [Instalación con Helm](#instalación-con-helm)
+    - [Configuración con MetalLB (desarrollo local)](#configuración-con-metallb-desarrollo-local)
     - [Verificamos la configuración](#verificamos-la-configuración)
     - [Acceso a la interfaz web](#acceso-a-la-interfaz-web)
   - [Comandos útiles](#comandos-útiles)
@@ -70,6 +71,51 @@ helm install argocd argo/argo-cd \
   --set server.service.type=LoadBalancer
 ```
 
+### Configuración con MetalLB (desarrollo local)
+
+#### Para Minikube
+
+Minikube tiene su propio sistema de túnel para LoadBalancer. No necesitas MetalLB:
+
+```bash
+# Instalar ArgoCD con LoadBalancer (configuración estándar)
+helm install argocd argo/argo-cd \
+  --namespace argocd \
+  --set server.service.type=LoadBalancer
+
+# Habilitar túnel de Minikube (mantener terminal abierta)
+minikube tunnel
+```
+
+**Alternativa con NodePort para Minikube:**
+```bash
+# Cambiar a NodePort si prefieres no usar túnel
+kubectl patch svc argocd-server -n argocd -p '{"spec":{"type":"NodePort"}}'
+
+# Obtener URL de acceso directo
+minikube service argocd-server -n argocd --url
+```
+
+#### Para Kind con MetalLB
+
+Para entornos Kind que usan MetalLB como LoadBalancer:
+
+```bash
+# Instalar ArgoCD con configuración para MetalLB
+helm install argocd argo/argo-cd \
+  --namespace argocd \
+  --set server.service.type=LoadBalancer \
+  --set server.service.annotations."metallb\.universe\.tf/address-pool"=default
+
+# Alternativamente, si necesitas especificar una IP específica:
+helm install argocd argo/argo-cd \
+  --namespace argocd \
+  --set server.service.type=LoadBalancer \
+  --set server.service.loadBalancerIP=172.18.255.200
+```
+
+**Nota:** Para Kind, asegúrate de que MetalLB esté configurado usando `utils/kind/`.
+
 ### Verificamos la configuración
 
 Verificamos que todos los pods estén ejecutándose:
@@ -89,18 +135,43 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 Para acceder a la interfaz web de ArgoCD:
 
+#### Con Minikube
+```bash
+# Opción 1: Con minikube tunnel (LoadBalancer)
+# Ejecutar en terminal separada: minikube tunnel
+kubectl get svc argocd-server -n argocd
+# Acceder a: https://EXTERNAL-IP
+
+# Opción 2: Con NodePort
+minikube service argocd-server -n argocd --url
+# Usar la URL proporcionada directamente
+```
+
+#### Con LoadBalancer (EKS/Kind+MetalLB)
 ```bash
 # Obtener la IP del LoadBalancer
 kubectl get svc argocd-server -n argocd
 
-# O usar port-forward si no tienes LoadBalancer
+# Con MetalLB, la IP externa será asignada automáticamente
+# Ejemplo de salida:
+# NAME            TYPE           CLUSTER-IP      EXTERNAL-IP      PORT(S)
+# argocd-server   LoadBalancer   10.96.123.45    172.18.255.200   80:32000/TCP,443:32001/TCP
+```
+
+#### Con Port-Forward (alternativa universal)
+```bash
+# Usar port-forward como alternativa en cualquier entorno
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
 
 **Credenciales de acceso:**
 - **Usuario**: admin
 - **Contraseña**: La obtenida en el paso anterior
-- **URL**: https://EXTERNAL-IP o https://localhost:8080
+- **URL**:
+  - Minikube con túnel: `https://EXTERNAL-IP`
+  - Minikube con NodePort: URL de `minikube service`
+  - Kind/EKS LoadBalancer: `https://EXTERNAL-IP` (ej: https://172.18.255.200)
+  - Port-Forward: `https://localhost:8080`
 
 ## Comandos útiles
 
