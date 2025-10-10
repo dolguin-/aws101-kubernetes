@@ -53,7 +53,8 @@ En la [Clase 8 - Secretos](../clase-8/) aprendimos los conceptos básicos de sec
 
 Los **backends** son sistemas externos que almacenan y gestionan secretos de forma segura:
 
-- **AWS Secrets Manager**: Servicio nativo de AWS
+- **AWS Secrets Manager**: Servicio nativo de AWS para secretos
+- **AWS SSM Parameter Store**: Almacén de parámetros y secretos de AWS
 - **HashiCorp Vault**: Solución open-source popular
 - **Azure Key Vault**: Servicio de Microsoft Azure
 - **Google Secret Manager**: Servicio de Google Cloud
@@ -82,6 +83,28 @@ AWS Secrets Manager es un servicio completamente administrado que:
 - **Integra con servicios AWS** como RDS, Redshift, DocumentDB
 - **Proporciona auditoría** completa con CloudTrail
 - **Controla acceso** mediante IAM policies
+
+## AWS SSM Parameter Store
+
+AWS Systems Manager Parameter Store es una alternativa económica que:
+
+- **Almacena parámetros** de configuración y secretos
+- **Soporte para jerarquías** con estructura de árbol
+- **Encriptación opcional** con AWS KMS
+- **Integración nativa** con otros servicios AWS
+- **Costo reducido** comparado con Secrets Manager
+- **Versionado** de parámetros automático
+
+### Cuándo usar cada servicio
+
+| Característica | Secrets Manager | Parameter Store |
+|---|---|---|
+| **Costo** | Más caro | Más económico |
+| **Rotación automática** | ✅ Nativa | ❌ Manual |
+| **Límite de tamaño** | 64KB | 8KB (Standard), 8KB (Advanced) |
+| **Versionado** | ✅ | ✅ |
+| **Encriptación** | ✅ Siempre | ✅ Opcional |
+| **Casos de uso** | Secretos críticos | Configuración general |
 
 ## Práctica
 
@@ -124,6 +147,36 @@ aws secretsmanager create-secret \
 aws secretsmanager describe-secret --secret-id "clase15/database-credentials"
 ```
 
+### Configurar AWS SSM Parameter Store (Alternativa)
+
+#### Crear parámetros en SSM Parameter Store
+
+```bash
+# Crear parámetros individuales (más económico)
+aws ssm put-parameter \
+  --name "/clase15/database/username" \
+  --value "admin" \
+  --type "String"
+
+aws ssm put-parameter \
+  --name "/clase15/database/password" \
+  --value "mi-password-super-secreto" \
+  --type "SecureString"
+
+aws ssm put-parameter \
+  --name "/clase15/database/host" \
+  --value "db.ejemplo.com" \
+  --type "String"
+
+aws ssm put-parameter \
+  --name "/clase15/database/port" \
+  --value "5432" \
+  --type "String"
+
+# Verificar parámetros
+aws ssm get-parameters-by-path --path "/clase15/database" --recursive
+```
+
 #### Configurar IAM para acceso
 
 ```bash
@@ -160,6 +213,7 @@ eksctl create iamserviceaccount \
 
 ### Crear SecretStore
 
+#### Para AWS Secrets Manager
 ```yaml
 # secretstore.yaml
 apiVersion: external-secrets.io/v1beta1
@@ -177,12 +231,34 @@ spec:
           name: external-secrets-sa
 ```
 
+#### Para AWS SSM Parameter Store
+```yaml
+# secretstore-ssm.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: SecretStore
+metadata:
+  name: aws-parameter-store
+  namespace: clase15
+spec:
+  provider:
+    aws:
+      service: ParameterStore
+      region: us-east-1
+      auth:
+        serviceAccount:
+          name: external-secrets-sa
+```
+
 ```bash
+# Aplicar el SecretStore deseado
 kubectl apply -f secretstore.yaml
+# O para SSM Parameter Store
+kubectl apply -f secretstore-ssm.yaml
 ```
 
 ### Crear ExternalSecret
 
+#### Para AWS Secrets Manager
 ```yaml
 # external-secret.yaml
 apiVersion: external-secrets.io/v1beta1
@@ -217,8 +293,42 @@ spec:
       property: port
 ```
 
+#### Para AWS SSM Parameter Store
+```yaml
+# external-secret-ssm.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: database-secret-ssm
+  namespace: clase15
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-parameter-store
+    kind: SecretStore
+  target:
+    name: database-credentials-ssm
+    creationPolicy: Owner
+  data:
+  - secretKey: username
+    remoteRef:
+      key: /clase15/database/username
+  - secretKey: password
+    remoteRef:
+      key: /clase15/database/password
+  - secretKey: host
+    remoteRef:
+      key: /clase15/database/host
+  - secretKey: port
+    remoteRef:
+      key: /clase15/database/port
+```
+
 ```bash
+# Aplicar el ExternalSecret deseado
 kubectl apply -f external-secret.yaml
+# O para SSM Parameter Store
+kubectl apply -f external-secret-ssm.yaml
 ```
 
 ### Verificar la sincronización
@@ -266,6 +376,18 @@ spec:
         secretRef:
           name: azure-secret
           key: client-secret
+```
+
+### AWS SSM Parameter Store
+```yaml
+spec:
+  provider:
+    aws:
+      service: ParameterStore
+      region: us-east-1
+      auth:
+        serviceAccount:
+          name: external-secrets-sa
 ```
 
 ### Google Secret Manager
@@ -316,8 +438,14 @@ Para limpiar todos los recursos creados:
 kubectl delete externalsecret database-secret -n clase15
 kubectl delete secretstore aws-secrets-manager -n clase15
 
-# Eliminar secreto de AWS
+# Eliminar secreto de AWS Secrets Manager
 aws secretsmanager delete-secret --secret-id "clase15/database-credentials" --force-delete-without-recovery
+
+# O eliminar parámetros de SSM Parameter Store
+aws ssm delete-parameter --name "/clase15/database/username"
+aws ssm delete-parameter --name "/clase15/database/password"
+aws ssm delete-parameter --name "/clase15/database/host"
+aws ssm delete-parameter --name "/clase15/database/port"
 
 # Desinstalar External Secrets Operator
 helm uninstall external-secrets -n external-secrets-system
