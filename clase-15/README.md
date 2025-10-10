@@ -29,7 +29,9 @@
 
 ## Objetivo de la Clase
 
-Dominar External Secrets Operator (ESO) para integrar sistemas externos de gestión de secretos con Kubernetes, automatizando la sincronización y rotación de secretos desde múltiples backends de forma segura y escalable.
+Dominar la **administración avanzada de secretos en Kubernetes** utilizando External Secrets Operator (ESO) para integrar sistemas externos de gestión de secretos, automatizando la sincronización y rotación de secretos desde múltiples backends de forma segura y escalable.
+
+Esta clase es la evolución natural de los conceptos básicos aprendidos en la [**Clase 8 - Secretos**](../clase-8/), donde vimos cómo crear y gestionar secretos nativos de Kubernetes. Ahora avanzaremos hacia soluciones empresariales que resuelven las limitaciones de la gestión manual.
 
 ## ¿Qué es External Secrets Operator?
 
@@ -46,22 +48,34 @@ Dominar External Secrets Operator (ESO) para integrar sistemas externos de gesti
 
 ## ¿Por qué usar External Secrets?
 
-En la [Clase 8 - Secretos](../clase-8/) aprendimos los conceptos básicos de secretos en Kubernetes. External Secrets Operator resuelve las limitaciones de la gestión manual de secretos:
+### Evolución desde Secretos Básicos
 
-### Problemas de Secretos Nativos
-❌ **Gestión manual** - Crear y actualizar secretos manualmente
-❌ **Sin rotación** - Cambios requieren intervención manual
-❌ **Falta de auditoría** - Difícil rastrear accesos y cambios
-❌ **Almacenamiento local** - Secretos en etcd del cluster
-❌ **Sin versionado** - No hay historial de cambios
+En la [**Clase 8 - Secretos**](../clase-8/) aprendimos los fundamentos de la gestión de secretos en Kubernetes: cómo crear, usar y gestionar secretos nativos. Estos conocimientos son la base esencial, pero en entornos de producción y empresariales necesitamos **administración avanzada de secretos**.
 
-### Soluciones con External Secrets
-✅ **Gestión centralizada** - Un solo lugar para todos los secretos
-✅ **Rotación automática** - Secretos se actualizan automáticamente
-✅ **Auditoría completa** - Logs detallados de todos los accesos
-✅ **Múltiples backends** - Flexibilidad en la elección de proveedor
-✅ **Versionado** - Historial completo de cambios
-✅ **Compliance** - Cumple estándares empresariales
+### Limitaciones de la Gestión Manual
+
+Los secretos nativos de Kubernetes, aunque útiles para casos básicos, presentan desafíos significativos en producción:
+
+- ❌ **Gestión manual** - Crear y actualizar secretos manualmente
+- ❌ **Sin rotación automática** - Cambios requieren intervención manual
+- ❌ **Falta de auditoría** - Difícil rastrear accesos y cambios
+- ❌ **Almacenamiento local** - Secretos en etcd del cluster
+- ❌ **Sin versionado** - No hay historial de cambios
+- ❌ **Escalabilidad limitada** - Difícil gestionar cientos de secretos
+- ❌ **Compliance** - No cumple estándares empresariales
+
+### ¿Por qué External Secrets Operator?
+
+La **administración avanzada de secretos en Kubernetes** requiere herramientas especializadas que integren con sistemas externos empresariales:
+
+- ✅ **Gestión centralizada** - Un solo lugar para todos los secretos
+- ✅ **Rotación automática** - Secretos se actualizan automáticamente
+- ✅ **Auditoría completa** - Logs detallados de todos los accesos
+- ✅ **Múltiples backends** - Flexibilidad en la elección de proveedor
+- ✅ **Versionado** - Historial completo de cambios
+- ✅ **Escalabilidad** - Maneja miles de secretos eficientemente
+- ✅ **Compliance** - Cumple estándares empresariales
+- ✅ **Separación de responsabilidades** - Equipos de seguridad gestionan secretos centralmente
 
 ## Arquitectura y Componentes
 
@@ -87,12 +101,24 @@ Un **ExternalSecret** define:
 
 ### Backends Soportados
 
-- **AWS**: Secrets Manager, SSM Parameter Store
-- **HashiCorp Vault**: KV v1/v2, Database, PKI
-- **Azure**: Key Vault
-- **Google Cloud**: Secret Manager
-- **Kubernetes**: Secretos de otros clusters
-- **Y muchos más**: GitLab, Doppler, 1Password, etc.
+- **AWS**:
+  - Secrets Manager
+  - SSM Parameter Store
+- **HashiCorp Vault**:
+  - KV v1/v2
+  - Database
+  - PKI
+- **Azure**:
+  - Key Vault
+- **Google Cloud**:
+  - Secret Manager
+- **Kubernetes**:
+  - Secretos de otros clusters
+- **Otros**:
+  - GitLab
+  - Doppler
+  - 1Password
+  - Y muchos más
 
 ## Instalación
 
