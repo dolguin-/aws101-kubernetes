@@ -6,7 +6,7 @@
 ### Linux ###
 *~
 ### Mac
-.DS_Store
+**/.DS_Store
 
 ### Q context
 aws101-kubernetes.q

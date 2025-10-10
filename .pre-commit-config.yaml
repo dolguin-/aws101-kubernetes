@@ -13,3 +13,7 @@ repos:
   rev: v0.10.0
   hooks:
     - id: shellcheck
+- repo: https://github.com/gruntwork-io/pre-commit
+  rev: v0.1.23
+  hooks:
+    - id: helmlint
