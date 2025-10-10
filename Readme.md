@@ -67,6 +67,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 15. **Clase 15** - Secrets Manager
     - [Material](clase-15/)
 
+16. **Clase 16** - Kubernetes Monitoreo Avanzado
+    - [Material](clase-16/)
+
 ## 🛠️ Herramientas y Utilidades
 
 ### Desarrollo Local
