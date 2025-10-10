@@ -1,22 +1,27 @@
-# Secrets Manager
+# External Secrets Operator
 
-- [Secrets Manager](#secrets-manager)
+- [External Secrets Operator](#external-secrets-operator)
   - [Objetivo de la Clase](#objetivo-de-la-clase)
-  - [¿Por qué usar Secrets Manager?](#por-qué-usar-secrets-manager)
-  - [Conceptos Fundamentales](#conceptos-fundamentales)
-    - [Backends de Secretos](#backends-de-secretos)
-    - [External Secrets Operator](#external-secrets-operator)
+  - [¿Qué es External Secrets Operator?](#qué-es-external-secrets-operator)
+  - [¿Por qué usar External Secrets?](#por-qué-usar-external-secrets)
+  - [Arquitectura y Componentes](#arquitectura-y-componentes)
     - [SecretStore vs ClusterSecretStore](#secretstore-vs-clustersecretstore)
-  - [AWS Secrets Manager](#aws-secrets-manager)
+    - [ExternalSecret](#externalsecret)
+    - [Backends Soportados](#backends-soportados)
+  - [Instalación](#instalación)
+  - [Configuración con AWS](#configuración-con-aws)
+    - [AWS Secrets Manager](#aws-secrets-manager)
+    - [AWS SSM Parameter Store](#aws-ssm-parameter-store)
+    - [Configuración IAM](#configuración-iam)
   - [Práctica](#práctica)
     - [Preparación](#preparación)
-    - [Instalación del External Secrets Operator](#instalación-del-external-secrets-operator)
-    - [Configurar AWS Secrets Manager](#configurar-aws-secrets-manager)
+    - [Configurar Backend AWS](#configurar-backend-aws)
     - [Crear SecretStore](#crear-secretstore)
     - [Crear ExternalSecret](#crear-externalsecret)
-    - [Verificar la sincronización](#verificar-la-sincronización)
-  - [Otros Backends Soportados](#otros-backends-soportados)
+    - [Verificar Sincronización](#verificar-sincronización)
+  - [Otros Backends](#otros-backends)
   - [Comandos útiles](#comandos-útiles)
+  - [Troubleshooting](#troubleshooting)
   - [Remover los recursos](#remover-los-recursos)
   - [Disclaimer](#disclaimer)
   - [Referencias](#referencias)
@@ -24,106 +29,81 @@
 
 ## Objetivo de la Clase
 
-Aprender a integrar sistemas externos de gestión de secretos como AWS Secrets Manager con Kubernetes, utilizando External Secrets Operator para sincronizar secretos de manera segura y automatizada.
+Dominar External Secrets Operator (ESO) para integrar sistemas externos de gestión de secretos con Kubernetes, automatizando la sincronización y rotación de secretos desde múltiples backends de forma segura y escalable.
 
-## ¿Por qué usar Secrets Manager?
+## ¿Qué es External Secrets Operator?
 
-En la [Clase 8 - Secretos](../clase-8/) aprendimos los conceptos básicos de secretos en Kubernetes y cómo crearlos manualmente. Sin embargo, en entornos de producción necesitamos una gestión más robusta y segura de secretos.
+**External Secrets Operator (ESO)** es un operador de Kubernetes que sincroniza secretos desde sistemas externos hacia secretos nativos de Kubernetes. Actúa como un puente entre tu cluster y proveedores de secretos externos, manteniendo los secretos actualizados automáticamente.
 
-### Limitaciones de los Secretos Nativos de Kubernetes
+### Características Principales
 
-- **Gestión manual**: Crear y actualizar secretos requiere intervención manual
-- **Rotación compleja**: Cambiar secretos implica múltiples pasos manuales
-- **Falta de auditoría**: Difícil rastrear quién accede o modifica secretos
-- **Almacenamiento local**: Los secretos se almacenan en etcd del cluster
-- **Sin versionado**: No hay historial de cambios en los secretos
+- **Sincronización automática** de secretos desde múltiples backends
+- **Rotación automática** cuando los secretos cambian en el origen
+- **Múltiples proveedores** soportados (AWS, Azure, GCP, Vault, etc.)
+- **Configuración declarativa** usando Custom Resources
+- **Seguridad mejorada** - secretos nunca en código o manifiestos
+- **Escalabilidad** - maneja miles de secretos eficientemente
 
-### Beneficios de External Secrets Manager
+## ¿Por qué usar External Secrets?
 
-- **Centralización**: Un solo lugar para gestionar todos los secretos
-- **Rotación automática**: Los secretos se actualizan automáticamente
-- **Auditoría completa**: Logs detallados de acceso y modificaciones
-- **Múltiples backends**: Soporte para AWS, Azure, GCP, HashiCorp Vault, etc.
-- **Seguridad mejorada**: Secretos nunca se almacenan en código o manifiestos
-- **Compliance**: Cumple con estándares de seguridad empresariales
+En la [Clase 8 - Secretos](../clase-8/) aprendimos los conceptos básicos de secretos en Kubernetes. External Secrets Operator resuelve las limitaciones de la gestión manual de secretos:
 
-## Conceptos Fundamentales
+### Problemas de Secretos Nativos
+❌ **Gestión manual** - Crear y actualizar secretos manualmente
+❌ **Sin rotación** - Cambios requieren intervención manual
+❌ **Falta de auditoría** - Difícil rastrear accesos y cambios
+❌ **Almacenamiento local** - Secretos en etcd del cluster
+❌ **Sin versionado** - No hay historial de cambios
 
-### Backends de Secretos
+### Soluciones con External Secrets
+✅ **Gestión centralizada** - Un solo lugar para todos los secretos
+✅ **Rotación automática** - Secretos se actualizan automáticamente
+✅ **Auditoría completa** - Logs detallados de todos los accesos
+✅ **Múltiples backends** - Flexibilidad en la elección de proveedor
+✅ **Versionado** - Historial completo de cambios
+✅ **Compliance** - Cumple estándares empresariales
 
-Los **backends** son sistemas externos que almacenan y gestionan secretos de forma segura:
-
-- **AWS Secrets Manager**: Servicio nativo de AWS para secretos
-- **AWS SSM Parameter Store**: Almacén de parámetros y secretos de AWS
-- **HashiCorp Vault**: Solución open-source popular
-- **Azure Key Vault**: Servicio de Microsoft Azure
-- **Google Secret Manager**: Servicio de Google Cloud
-- **Kubernetes Secrets**: Para casos simples
-
-### External Secrets Operator
-
-El **External Secrets Operator (ESO)** es un operador de Kubernetes que:
-
-- Sincroniza secretos desde sistemas externos
-- Mantiene los secretos actualizados automáticamente
-- Soporta múltiples proveedores de secretos
-- Proporciona recursos CRD para configuración declarativa
+## Arquitectura y Componentes
 
 ### SecretStore vs ClusterSecretStore
 
-- **SecretStore**: Configuración de backend a nivel de namespace
-- **ClusterSecretStore**: Configuración global para todo el cluster
+**SecretStore**
+- Configuración de backend a **nivel de namespace**
+- Secretos accesibles solo dentro del namespace
+- Ideal para equipos o aplicaciones específicas
 
-## AWS Secrets Manager
+**ClusterSecretStore**
+- Configuración **global** para todo el cluster
+- Secretos accesibles desde cualquier namespace
+- Ideal para configuraciones compartidas
 
-AWS Secrets Manager es un servicio completamente administrado que:
+### ExternalSecret
 
-- **Almacena secretos** de forma segura y encriptada
-- **Rota automáticamente** credenciales de bases de datos
-- **Integra con servicios AWS** como RDS, Redshift, DocumentDB
-- **Proporciona auditoría** completa con CloudTrail
-- **Controla acceso** mediante IAM policies
+Un **ExternalSecret** define:
+- **Qué secretos** obtener del backend externo
+- **Cómo mapear** los datos a un Secret de Kubernetes
+- **Cuándo actualizar** (refresh interval)
+- **Dónde crear** el Secret resultante
 
-## AWS SSM Parameter Store
+### Backends Soportados
 
-AWS Systems Manager Parameter Store es una alternativa económica que:
+- **AWS**: Secrets Manager, SSM Parameter Store
+- **HashiCorp Vault**: KV v1/v2, Database, PKI
+- **Azure**: Key Vault
+- **Google Cloud**: Secret Manager
+- **Kubernetes**: Secretos de otros clusters
+- **Y muchos más**: GitLab, Doppler, 1Password, etc.
 
-- **Almacena parámetros** de configuración y secretos
-- **Soporte para jerarquías** con estructura de árbol
-- **Encriptación opcional** con AWS KMS
-- **Integración nativa** con otros servicios AWS
-- **Costo reducido** comparado con Secrets Manager
-- **Versionado** de parámetros automático
+## Instalación
 
-### Cuándo usar cada servicio
-
-| Característica | Secrets Manager | Parameter Store |
-|---|---|---|
-| **Costo** | Más caro | Más económico |
-| **Rotación automática** | ✅ Nativa | ❌ Manual |
-| **Límite de tamaño** | 64KB | 8KB (Standard), 8KB (Advanced) |
-| **Versionado** | ✅ | ✅ |
-| **Encriptación** | ✅ Siempre | ✅ Opcional |
-| **Casos de uso** | Secretos críticos | Configuración general |
-
-## Práctica
-
-### Preparación
-
-Creamos el namespace para esta práctica:
-
-```bash
-kubectl create namespace clase15
-```
-
-### Instalación del External Secrets Operator
+### Instalar External Secrets Operator
 
 ```bash
 # Agregar repositorio de Helm
 helm repo add external-secrets https://charts.external-secrets.io
 helm repo update
 
-# Instalar External Secrets Operator
+# Instalar ESO
 helm install external-secrets external-secrets/external-secrets \
   --namespace external-secrets-system \
   --create-namespace
@@ -132,55 +112,40 @@ helm install external-secrets external-secrets/external-secrets \
 kubectl get pods -n external-secrets-system
 ```
 
-### Configurar AWS Secrets Manager
+## Configuración con AWS
 
-#### Crear secreto en AWS Secrets Manager
+### AWS Secrets Manager
 
-```bash
-# Crear secreto con AWS CLI
-aws secretsmanager create-secret \
-  --name "clase15/database-credentials" \
-  --description "Credenciales de base de datos para clase 15" \
-  --secret-string '{"username":"admin","password":"mi-password-super-secreto","host":"db.ejemplo.com","port":"5432"}'
+**Características:**
+- Rotación automática nativa
+- Integración con RDS/DocumentDB
+- Encriptación siempre activa
+- Ideal para secretos críticos
 
-# Verificar creación
-aws secretsmanager describe-secret --secret-id "clase15/database-credentials"
-```
+**Casos de uso:** Credenciales de bases de datos, API keys críticos, certificados
 
-### Configurar AWS SSM Parameter Store (Alternativa)
+### AWS SSM Parameter Store
 
-#### Crear parámetros en SSM Parameter Store
+**Características:**
+- Más económico que Secrets Manager
+- Soporte para jerarquías
+- Encriptación opcional con KMS
+- Ideal para configuración general
 
-```bash
-# Crear parámetros individuales (más económico)
-aws ssm put-parameter \
-  --name "/clase15/database/username" \
-  --value "admin" \
-  --type "String"
+**Casos de uso:** Configuración de aplicaciones, parámetros no críticos
 
-aws ssm put-parameter \
-  --name "/clase15/database/password" \
-  --value "mi-password-super-secreto" \
-  --type "SecureString"
+| Característica | Secrets Manager | Parameter Store |
+|---|---|---|
+| **Costo** | Más caro | Más económico |
+| **Rotación automática** | ✅ Nativa | ❌ Manual |
+| **Límite de tamaño** | 64KB | 8KB |
+| **Encriptación** | ✅ Siempre | ✅ Opcional |
+| **Casos de uso** | Secretos críticos | Configuración general |
 
-aws ssm put-parameter \
-  --name "/clase15/database/host" \
-  --value "db.ejemplo.com" \
-  --type "String"
-
-aws ssm put-parameter \
-  --name "/clase15/database/port" \
-  --value "5432" \
-  --type "String"
-
-# Verificar parámetros
-aws ssm get-parameters-by-path --path "/clase15/database" --recursive
-```
-
-#### Configurar IAM para acceso
+### Configuración IAM
 
 ```bash
-# Crear policy IAM (guardar como iam-policy.json)
+# Crear policy IAM
 cat > iam-policy.json << EOF
 {
     "Version": "2012-10-17",
@@ -189,9 +154,15 @@ cat > iam-policy.json << EOF
             "Effect": "Allow",
             "Action": [
                 "secretsmanager:GetSecretValue",
-                "secretsmanager:DescribeSecret"
+                "secretsmanager:DescribeSecret",
+                "ssm:GetParameter",
+                "ssm:GetParameters",
+                "ssm:GetParametersByPath"
             ],
-            "Resource": "arn:aws:secretsmanager:*:*:secret:clase15/*"
+            "Resource": [
+                "arn:aws:secretsmanager:*:*:secret:clase15/*",
+                "arn:aws:ssm:*:*:parameter/clase15/*"
+            ]
         }
     ]
 }
@@ -202,7 +173,7 @@ aws iam create-policy \
   --policy-name ExternalSecretsPolicy \
   --policy-document file://iam-policy.json
 
-# Crear service account con IRSA (si usas EKS)
+# Crear service account con IRSA (EKS)
 eksctl create iamserviceaccount \
   --name external-secrets-sa \
   --namespace clase15 \
@@ -211,11 +182,38 @@ eksctl create iamserviceaccount \
   --approve
 ```
 
+## Práctica
+
+### Preparación
+
+```bash
+# Crear namespace
+kubectl create namespace clase15
+```
+
+### Configurar Backend AWS
+
+#### Opción A: AWS Secrets Manager
+```bash
+# Crear secreto
+aws secretsmanager create-secret \
+  --name "clase15/database-credentials" \
+  --secret-string '{"username":"admin","password":"mi-password-secreto","host":"db.ejemplo.com","port":"5432"}'
+```
+
+#### Opción B: AWS SSM Parameter Store
+```bash
+# Crear parámetros
+aws ssm put-parameter --name "/clase15/database/username" --value "admin" --type "String"
+aws ssm put-parameter --name "/clase15/database/password" --value "mi-password-secreto" --type "SecureString"
+aws ssm put-parameter --name "/clase15/database/host" --value "db.ejemplo.com" --type "String"
+aws ssm put-parameter --name "/clase15/database/port" --value "5432" --type "String"
+```
+
 ### Crear SecretStore
 
-#### Para AWS Secrets Manager
+#### Para Secrets Manager
 ```yaml
-# secretstore.yaml
 apiVersion: external-secrets.io/v1beta1
 kind: SecretStore
 metadata:
@@ -231,9 +229,8 @@ spec:
           name: external-secrets-sa
 ```
 
-#### Para AWS SSM Parameter Store
+#### Para Parameter Store
 ```yaml
-# secretstore-ssm.yaml
 apiVersion: external-secrets.io/v1beta1
 kind: SecretStore
 metadata:
@@ -249,18 +246,10 @@ spec:
           name: external-secrets-sa
 ```
 
-```bash
-# Aplicar el SecretStore deseado
-kubectl apply -f secretstore.yaml
-# O para SSM Parameter Store
-kubectl apply -f secretstore-ssm.yaml
-```
-
 ### Crear ExternalSecret
 
-#### Para AWS Secrets Manager
+#### Para Secrets Manager
 ```yaml
-# external-secret.yaml
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
@@ -283,19 +272,10 @@ spec:
     remoteRef:
       key: clase15/database-credentials
       property: password
-  - secretKey: host
-    remoteRef:
-      key: clase15/database-credentials
-      property: host
-  - secretKey: port
-    remoteRef:
-      key: clase15/database-credentials
-      property: port
 ```
 
-#### Para AWS SSM Parameter Store
+#### Para Parameter Store
 ```yaml
-# external-secret-ssm.yaml
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
@@ -316,39 +296,22 @@ spec:
   - secretKey: password
     remoteRef:
       key: /clase15/database/password
-  - secretKey: host
-    remoteRef:
-      key: /clase15/database/host
-  - secretKey: port
-    remoteRef:
-      key: /clase15/database/port
 ```
 
-```bash
-# Aplicar el ExternalSecret deseado
-kubectl apply -f external-secret.yaml
-# O para SSM Parameter Store
-kubectl apply -f external-secret-ssm.yaml
-```
-
-### Verificar la sincronización
+### Verificar Sincronización
 
 ```bash
 # Verificar ExternalSecret
 kubectl get externalsecret -n clase15
 
-# Verificar que el Secret fue creado
-kubectl get secret database-credentials -n clase15
+# Verificar Secret creado
+kubectl get secret -n clase15
 
-# Ver contenido del secret (base64 decoded)
+# Ver contenido del secret
 kubectl get secret database-credentials -n clase15 -o jsonpath='{.data.username}' | base64 -d
-kubectl get secret database-credentials -n clase15 -o jsonpath='{.data.password}' | base64 -d
-
-# Verificar logs del operator
-kubectl logs -n external-secrets-system deployment/external-secrets
 ```
 
-## Otros Backends Soportados
+## Otros Backends
 
 ### HashiCorp Vault
 ```yaml
@@ -378,18 +341,6 @@ spec:
           key: client-secret
 ```
 
-### AWS SSM Parameter Store
-```yaml
-spec:
-  provider:
-    aws:
-      service: ParameterStore
-      region: us-east-1
-      auth:
-        serviceAccount:
-          name: external-secrets-sa
-```
-
 ### Google Secret Manager
 ```yaml
 spec:
@@ -407,13 +358,13 @@ spec:
 ## Comandos útiles
 
 ```bash
-# Listar todos los ExternalSecrets
+# Listar ExternalSecrets
 kubectl get externalsecret -A
 
-# Ver estado detallado de un ExternalSecret
+# Ver estado detallado
 kubectl describe externalsecret database-secret -n clase15
 
-# Forzar sincronización inmediata
+# Forzar sincronización
 kubectl annotate externalsecret database-secret -n clase15 force-sync=$(date +%s)
 
 # Ver logs del operator
@@ -422,11 +373,42 @@ kubectl logs -n external-secrets-system -l app.kubernetes.io/name=external-secre
 # Verificar SecretStore
 kubectl get secretstore -n clase15
 
-# Listar secretos sincronizados
+# Listar secretos gestionados por ESO
 kubectl get secret -n clase15 -l managed-by=external-secrets
+```
 
-# Verificar conectividad con backend
-kubectl get secretstore aws-secrets-manager -n clase15 -o yaml
+## Troubleshooting
+
+### Problemas Comunes
+
+#### ExternalSecret en estado "SecretSyncError"
+```bash
+# Verificar logs del operator
+kubectl logs -n external-secrets-system deployment/external-secrets
+
+# Verificar configuración del SecretStore
+kubectl describe secretstore aws-secrets-manager -n clase15
+
+# Verificar permisos IAM
+aws sts get-caller-identity
+```
+
+#### Secret no se actualiza automáticamente
+```bash
+# Verificar refreshInterval
+kubectl get externalsecret database-secret -n clase15 -o yaml | grep refreshInterval
+
+# Forzar sincronización manual
+kubectl annotate externalsecret database-secret -n clase15 force-sync=$(date +%s)
+```
+
+#### Errores de autenticación AWS
+```bash
+# Verificar service account
+kubectl get sa external-secrets-sa -n clase15 -o yaml
+
+# Verificar anotaciones IRSA
+kubectl get sa external-secrets-sa -n clase15 -o jsonpath='{.metadata.annotations}'
 ```
 
 ## Remover los recursos
