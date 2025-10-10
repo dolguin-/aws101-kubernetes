@@ -64,6 +64,9 @@ Semanalmente se publican videos en mi canal de Youtube [Damian Olguin [AWS Hero]
 14. **Clase 14** - Helm Charts
     - [Material](clase-14/)
 
+15. **Clase 15** - Secrets Manager
+    - [Material](clase-15/)
+
 ## 🛠️ Herramientas y Utilidades
 
 ### Desarrollo Local
