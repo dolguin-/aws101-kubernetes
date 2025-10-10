@@ -240,7 +240,7 @@ aws ssm put-parameter --name "/clase15/database/port" --value "5432" --type "Str
 
 #### Para Secrets Manager
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
   name: aws-secrets-manager
@@ -251,13 +251,14 @@ spec:
       service: SecretsManager
       region: us-east-1
       auth:
-        serviceAccount:
-          name: external-secrets-sa
+        jwt:
+          serviceAccountRef:
+            name: external-secrets-sa
 ```
 
 #### Para Parameter Store
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
   name: aws-parameter-store
@@ -268,15 +269,16 @@ spec:
       service: ParameterStore
       region: us-east-1
       auth:
-        serviceAccount:
-          name: external-secrets-sa
+        jwt:
+          serviceAccountRef:
+            name: external-secrets-sa
 ```
 
 ### Crear ExternalSecret
 
 #### Para Secrets Manager
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: database-secret
@@ -302,7 +304,7 @@ spec:
 
 #### Para Parameter Store
 ```yaml
-apiVersion: external-secrets.io/v1beta1
+apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: database-secret-ssm
@@ -335,6 +337,58 @@ kubectl get secret -n clase15
 
 # Ver contenido del secret
 kubectl get secret database-credentials -n clase15 -o jsonpath='{.data.username}' | base64 -d
+```
+
+## Ejemplo Práctico: MariaDB con External Secrets
+
+### Instalar External Secrets Operator
+
+```bash
+# Instalar External Secrets Operator
+helm repo add external-secrets https://charts.external-secrets.io
+helm repo update
+helm install external-secrets external-secrets/external-secrets \
+  --namespace external-secrets-system \
+  --create-namespace
+
+# Verificar instalación
+kubectl get pods -n external-secrets-system
+```
+
+### Crear secreto en AWS Secrets Manager
+
+```bash
+# Crear secreto para MariaDB
+aws secretsmanager create-secret \
+  --name "clase15/mariadb-credentials" \
+  --secret-string '{
+    "root_password":"mi-root-password-super-secreto",
+    "database":"mi_aplicacion",
+    "username":"app_user",
+    "password":"mi-password-de-usuario"
+  }'
+```
+
+### Desplegar MariaDB
+
+```bash
+# Aplicar todos los manifiestos
+kubectl apply -f .
+
+# Verificar despliegue
+kubectl get all -n clase15
+kubectl get externalsecret -n clase15
+kubectl get secret mariadb-credentials -n clase15
+```
+
+### Probar conexión
+
+```bash
+# Port-forward para acceder a MariaDB
+kubectl port-forward svc/mariadb -n clase15 3306:3306
+
+# Conectar desde otro terminal (requiere cliente mysql)
+mysql -h 127.0.0.1 -u app_user -p mi_aplicacion
 ```
 
 ## Otros Backends
@@ -406,6 +460,25 @@ kubectl get secret -n clase15 -l managed-by=external-secrets
 ## Troubleshooting
 
 ### Problemas Comunes
+
+#### Service Account no encontrado (CreateContainerConfigError)
+```bash
+# Error: CreateContainerConfigError - service account "external-secrets-sa" not found
+
+# Verificar si existe el service account
+kubectl get sa external-secrets-sa -n clase15
+
+# Si no existe, crearlo manualmente
+kubectl create serviceaccount external-secrets-sa -n clase15
+
+# O crear con IRSA para EKS
+eksctl create iamserviceaccount \
+  --name external-secrets-sa \
+  --namespace clase15 \
+  --cluster tu-cluster-name \
+  --attach-policy-arn arn:aws:iam::ACCOUNT-ID:policy/ExternalSecretsPolicy \
+  --approve
+```
 
 #### ExternalSecret en estado "SecretSyncError"
 ```bash
