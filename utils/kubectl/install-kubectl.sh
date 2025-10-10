@@ -31,12 +31,12 @@ echo "Descargando kubectl ${VERSION} para ${PLATFORM}/${ARCH}..."
 curl -LO "$URL"
 
 # Hacer ejecutable y mover a PATH
-chmod +x kubectl${EXT}
+chmod +x "kubectl${EXT}"
 
 if [[ "$PLATFORM" == "windows" ]]; then
     echo "Mueve kubectl.exe a un directorio en tu PATH"
 else
-    sudo mv kubectl${EXT} /usr/local/bin/kubectl
+    sudo mv "kubectl${EXT}" /usr/local/bin/kubectl
     echo "kubectl instalado en /usr/local/bin/kubectl"
 fi
 
