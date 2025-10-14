@@ -1,0 +1,38 @@
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  name: default
+spec:
+  # AMI Family
+  amiFamily: AL2023
+
+  # Subnets (usar las del cluster)
+  subnetSelectorTerms:
+    - tags:
+        alpha.eksctl.io/cluster-name: "aws101"
+
+  # Security Groups
+  securityGroupSelectorTerms:
+    - tags:
+        alpha.eksctl.io/cluster-name: "aws101"
+
+  # Instance Profile
+  role: "KarpenterNodeInstanceRole"
+
+  # User Data
+  userData: |
+    #!/bin/bash
+    /etc/eks/bootstrap.sh aws101
+
+  # Block Device Mappings
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: 20Gi
+        volumeType: gp3
+        deleteOnTermination: true
+
+  # Tags para las instancias
+  tags:
+    Name: "Karpenter-aws101"
+    Environment: "aws101"

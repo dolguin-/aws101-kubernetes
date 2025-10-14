@@ -1,0 +1,47 @@
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  name: default
+spec:
+  # Template para los nodos
+  template:
+    metadata:
+      labels:
+        intent: apps
+    spec:
+      # Tipos de instancia permitidos
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: ["t3.micro", "t3.small", "t3.medium"]
+
+      # Configuración de nodo
+      nodeClassRef:
+        apiVersion: karpenter.k8s.aws/v1beta1
+        kind: EC2NodeClass
+        name: default
+
+      # Taints opcionales
+      taints:
+        - key: example.com/special-workload
+          value: "true"
+          effect: NoSchedule
+
+  # Límites del NodePool
+  limits:
+    cpu: 1000
+    memory: 1000Gi
+
+  # Configuración de disrupción
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    expireAfter: 2160h # 90 días

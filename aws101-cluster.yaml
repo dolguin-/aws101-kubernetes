@@ -9,7 +9,7 @@ iam:
   withOIDC: true
 kind: ClusterConfig
 managedNodeGroups:
-- amiFamily: AmazonLinux2
+- amiFamily: AmazonLinux2023
   desiredCapacity: 1
   disableIMDSv1: true
   disablePodIMDS: false
@@ -42,7 +42,6 @@ managedNodeGroups:
     withShared: null
   ssh:
     allow: false
-    enableSsm: false
     publicKeyPath: ""
   tags:
     alpha.eksctl.io/nodegroup-name: aws101-nodes
