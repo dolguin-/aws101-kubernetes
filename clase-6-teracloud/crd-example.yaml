@@ -1,0 +1,28 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: asados.teracloud.com
+spec:
+  group: teracloud.com
+  scope: Namespaced
+  names:
+    plural: asados
+    singular: asadox
+    kind: Asado
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                carne:
+                  type: string
+                bebidas:
+                  type: string
+                insumos:
+                  type: string
