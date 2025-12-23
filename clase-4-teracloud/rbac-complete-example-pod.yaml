@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: config-reader-pod
+  namespace: default
+spec:
+  serviceAccountName: config-reader-sa
+  containers:
+  - name: kubectl-container
+    image: bitnami/kubectl:latest
+    command: ["sleep", "3600"]
+  restartPolicy: Never
