@@ -1,0 +1,9 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: configmap-reader
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["configmaps","events"]
+  verbs: ["get", "list", "watch"]
