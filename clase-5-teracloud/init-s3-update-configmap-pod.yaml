@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-with-s3-configmap
+spec:
+  serviceAccountName: s3-reader-sa
+  initContainers:
+  - name: s3-config-updater
+    image: amazon/aws-cli:latest
+    command: ['sh', '-c']
+    args:
+    - |
+      set -e
+      echo "Instalando kubectl..."
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" || { echo "Error: No se pudo descargar kubectl"; exit 1; }
+      chmod +x kubectl || { echo "Error: No se pudo dar permisos a kubectl"; exit 1; }
+      mv kubectl /usr/local/bin/ || { echo "Error: No se pudo mover kubectl"; exit 1; }
+      echo "Descargando configuración desde S3..."
+      aws s3 cp s3://bucketteraclase2025/app-config.json /tmp/config.json || { echo "Error: No se pudo descargar el archivo de S3"; exit 1; }
+      echo "Validando archivo descargado..."
+      [ -f /tmp/config.json ] || { echo "Error: Archivo no encontrado después de la descarga"; exit 1; }
+      echo "Actualizando ConfigMap existente..."
+      kubectl create configmap app-config --from-file=config.json=/tmp/config.json --dry-run=client -o yaml | kubectl replace -f - || { echo "Error: No se pudo actualizar el ConfigMap"; exit 1; }
+      echo "ConfigMap actualizado exitosamente"
+      kubectl create configmap app-config --from-file=config.json=/tmp/config.json --dry-run=client -o yaml | kubectl replace -f -;
+      echo "ConfigMap actualizado exitosamente";
+    env:
+    - name: AWS_DEFAULT_REGION
+      value: "us-east-1"
+  containers:
+  - name: main-app
+    image: nginx:alpine
+    command: ['sh', '-c']
+    args:
+    - echo "Aplicación iniciando...";
+      echo "Configuración desde ConfigMap:";
+      cat /app-config/config.json;
+      nginx -g 'daemon off;'
+    volumeMounts:
+    - name: config-volume
+      mountPath: /app-config
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config
