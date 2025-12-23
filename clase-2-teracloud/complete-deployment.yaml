@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mi-app
+  template:
+    metadata:
+      labels:
+        app: mi-app
+    spec:
+      containers:
+      - name: app
+        image: nginx:stable
+        ports:
+          - containerPort: 80
+        env:
+          - name: MYSQL_PASSWORD
+            value: "rds.aws.com"
+        envFrom:
+          - configMapRef:
+              name: mi-config
+          - secretRef:
+              name: mi-secret
+        volumeMounts:
+          - name: config-volume
+            mountPath: /config 
+            readOnly: true
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mi-config
+            items:
+              - key: CONFIG_FILE
+                path: app.conf
