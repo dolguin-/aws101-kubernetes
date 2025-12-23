@@ -1,0 +1,22 @@
+apiVersion: kubegres.reactive-tech.io/v1
+kind: Kubegres
+metadata:
+  name: mypostgres
+  namespace: default
+spec:
+   replicas: 1
+   image: postgres:17.2
+   database:
+      size: 4Gi
+      storageClassName: ebs-sc
+   env:
+      - name: POSTGRES_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: mypostgres-secret
+              key: superUserPassword
+      - name: POSTGRES_REPLICATION_PASSWORD
+        valueFrom:
+           secretKeyRef:
+              name: mypostgres-secret
+              key: replicationUserPassword

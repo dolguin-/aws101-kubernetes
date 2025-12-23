@@ -1,0 +1,8 @@
+apiVersion: teracloud.com/v1
+kind: Asado
+metadata:
+  name: viernes
+spec:
+  carne: vacio
+  bebidas: vino
+  insumos: leña
