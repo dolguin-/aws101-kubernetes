@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: data-processing-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: processor
+        image: busybox:1.28
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "Iniciando procesamiento de datos...";
+          for i in $(seq 1 10); dosasaseds
+            echo "Procesando item $i de 10";
+            sleep 2;
+          done;
+          echo "Procesamiento completado exitosamente"
+          echo "Resultado: 10 items procesados" > /tmp/result.txt;
+          cat /tmp/result.txt
+      restartPolicy: Never

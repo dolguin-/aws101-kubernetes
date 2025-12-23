@@ -1,0 +1,24 @@
+{
+  "database": {
+    "host": "db.example.com",
+    "port": 5432,
+    "name": "myapp_db",
+    "ssl": true
+  },
+  "redis": {
+    "host": "redis.example.com",
+    "port": 6379,
+    "timeout": 5000
+  },
+  "app": {
+    "name": "MyApplication",
+    "version": "1.0.0",
+    "debug": false,
+    "max_connections": 100
+  },
+  "features": {
+    "enable_cache": true,
+    "enable_logging": true,
+    "enable_metrics": true
+  }
+}

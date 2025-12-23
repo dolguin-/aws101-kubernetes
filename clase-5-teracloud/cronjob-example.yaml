@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backup-cronjob
+spec:
+  schedule: "*/2 * * * *"  # Cada 2 minutos
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: backup
+            image: busybox:1.28
+            command: ['sh', '-c']
+            args:
+            - |
+              echo "Iniciando backup programado...";
+              date;
+              echo "Creando backup de la base de datos...";
+              sleep 5;
+              echo "Backup completado: backup_$(date +%Y%m%d_%H%M%S).sql";
+              echo "Limpiando backups antiguos...";
+              echo "Backup job finalizado exitosamente"
+          restartPolicy: OnFailure
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
