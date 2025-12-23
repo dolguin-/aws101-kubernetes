@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-resources
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-resources
+  template:
+    metadata:
+      labels:
+        app: app-resources
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+          limits:
+            memory: "4Gi"
+            cpu: "3000m"
