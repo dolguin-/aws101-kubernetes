@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-podname
+  labels:
+    app: nginx-podname
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-podname
+  template:
+    metadata:
+      labels:
+        app:  nginx-podname
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 85
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            POD_NAME=$(hostname) && \
+            cp /tmp-html/index.template.html /usr/share/nginx/html/index.html && \
+            sed -i "s/nombredepod/$POD_NAME/g" /usr/share/nginx/html/index.html && \
+            nginx -g 'daemon off;'
+        volumeMounts:
+        - name: html-template
+          mountPath: /tmp-html
+          readOnly: true
+        - name: html-writable
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-template
+        configMap:
+          name: nginx-index-htm
+      - name: html-writable
+        emptyDir: {}
