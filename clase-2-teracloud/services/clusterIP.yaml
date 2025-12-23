@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mi-servicio-clusterip
+spec:
+  selector:
+    app: nginx-podname
+  ports:
+    - port: 80          # Puerto dentro del cluster
+      targetPort: 80  # Puerto del contenedor

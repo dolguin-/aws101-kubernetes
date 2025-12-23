@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mi-config
+data:
+  APP_NAME: "MiAplicacion"
+  APP_MODE: "production"
+  CONFIG_FILE: "/config/app.conf"

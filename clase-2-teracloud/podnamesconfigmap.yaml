@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index-html
+data:
+  index.template.html: |
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>My Nginx Pod</title>
+      </head>
+      <body>
+        <h1>Ke ondis, este es el Pod: nombredepod</h1>
+      </body>
+    </html>
