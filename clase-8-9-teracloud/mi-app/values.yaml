@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: "1.21"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  host: teraclase.sandbox.teratest.net
+  subDom2ain1: carlitos
+  tls:
+    enabled: true
+
+resources:
+  cpu: 100m
+  memory: 128Mi
+
+config:
+  APP_NAME: "Mi Aplicacion"
+  ENVIRONMENT: "development"
+  DEBUG: "true"
+  VALOR1:  teraclase2025
+  VALOR3: dldsldldslsldflsdf
+externalSecret:
+  enabled: true
+  secretKey: /teraclase/database
+  clusterSecretStore: ssm-store

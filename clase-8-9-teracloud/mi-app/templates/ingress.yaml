@@ -1,0 +1,28 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-ingress
+  labels:
+    app: {{ .Chart.Name }}
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    {{- if .Values.ingress.tls.enabled }}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    {{- end }}
+spec:
+  ingressClassName: alb
+  rules:
+
+  - host: "{{ .Values.ingress.subDomain }}.sandbox.teratest.net"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Chart.Name }}-service
+            port:
+              number: {{ .Values.service.port }}
+{{- end }}
