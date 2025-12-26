@@ -1,0 +1,109 @@
+---
+# Source: mi-app/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mi-app-config
+  labels:
+    app: mi-app
+data:
+  APP_NAME: "Mi Aplicacion"
+  DEBUG: "true"
+  ENVIRONMENT: "development"
+  VALOR1: "teraclase2025"
+  VALOR3: "dldsldldslsldflsdf"
+---
+# Source: mi-app/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mi-app-service
+  labels:
+    app: mi-app
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: mi-app
+---
+# Source: mi-app/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-app
+  labels:
+    app: mi-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mi-app
+  template:
+    metadata:
+      labels:
+        app: mi-app
+    spec:
+      containers:
+      - name: mi-app
+        image: "nginx:1.21"
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: mi-app-config
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+---
+# Source: mi-app/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mi-app-ingress
+  labels:
+    app: mi-app
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+spec:
+  ingressClassName: alb
+  rules:
+  - host: "carlitos.sandbox.teratest.net"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mi-app-service
+            port:
+              number: 80
+---
+# Source: mi-app/templates/external-secret.yaml
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: mi-app-external-secret
+  labels:
+    app: mi-app
+spec:
+  refreshInterval: 5m
+  secretStoreRef:
+    name: ssm-store
+    kind: ClusterSecretStore
+  target:
+    name: mi-app-secret
+    creationPolicy: Owner
+  data:
+  - secretKey: database-password
+    remoteRef:
+      key: /teraclase/database

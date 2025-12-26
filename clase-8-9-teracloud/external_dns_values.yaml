@@ -1,0 +1,11 @@
+policy: sync
+provider:
+  name: aws
+env:
+  - name: AWS_REGION
+    value: us-east-1
+sources:
+  - ingress
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::208619972546:role/eksctl-lea-addon-iamserviceaccount-kube-syste-Role1-d7jIg5HSH3gR
